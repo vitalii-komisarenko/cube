@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+
+
 class Tokenizer {
     enum TokenType {
         MacroIdentifier,      // #include, #ifdef
@@ -29,11 +32,27 @@ class Tokenizer {
         Assignment,           // =
         IsEqual,              // ==
         More,                 // >
-        MoreOrEqual,           // >=
+        MoreOrEqual,          // >=
     }
 
     class Token {
         TokenType type;
         String value;
     }
+
+    class TokenizerException extends Exception {
+        public TokenizerException() {
+            super("Tokenizer Exception");
+        }
+    }
+
+    public Tokenizer(String sourceCode) throws TokenizerException {
+        while (parser_pos < sourceCode.length()) {
+            throw new TokenizerException();
+        }
+    }
+
+    public ArrayList<Token> tokens = new ArrayList<Token>();
+
+    private int parser_pos;
 }
