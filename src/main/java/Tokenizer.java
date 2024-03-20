@@ -31,4 +31,9 @@ class Tokenizer {
         More,                 // >
         MoreOrEqual,           // >=
     }
+
+    class Token {
+        TokenType type;
+        String value;
+    }
 }
