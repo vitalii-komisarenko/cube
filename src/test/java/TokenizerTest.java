@@ -109,4 +109,29 @@ public class TokenizerTest {
         assertThrows(TokenizerException.class, () -> new Tokenizer("'\\"));
         assertThrows(TokenizerException.class, () -> new Tokenizer("'\\a"));
     }
+
+    @Test
+    public void testIdentifiers() {
+        try {
+            assertTrue(EqualsBuilder.reflectionEquals(
+                new Tokenizer("_").tokens,
+                new ArrayList<>(Arrays.asList(
+                    new Token(TokenType.Identifier, "_")
+                ))));
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            assertTrue(EqualsBuilder.reflectionEquals(
+                new Tokenizer("abc123").tokens,
+                new ArrayList<>(Arrays.asList(
+                    new Token(TokenType.Identifier, "abc123")
+                ))));
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+    }
 }

@@ -10,7 +10,7 @@ public class Tokenizer {
         DoubleOctothorp,      // ##
         NewLine,              // \n
 
-        Indentifier,          // int, i, return etc.
+        Identifier,          // int, i, return etc.
         Char,                 // 'a'
         String,               // "string"
         Integer,              // 123
@@ -38,12 +38,21 @@ public class Tokenizer {
     }
 
     public static class Token {
-        TokenType type;
-        String value;
+        public TokenType type;
+        public String value;
 
         public Token(TokenType type, String value) {
             this.type = type;
             this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (!(object instanceof Token)) {
+                return false;
+            }
+            Token other = (Token) object;
+            return this.type.equals(other.type) && this.value.equals(other.value);
         }
     }
 
@@ -57,14 +66,21 @@ public class Tokenizer {
         this.sourceCode = sourceCode;
 
         while (parser_pos < sourceCode.length()) {
-            if (sourceCode.charAt(parser_pos) == '\n') {
+            char ch = sourceCode.charAt(parser_pos);
+
+            if (ch == '\n') {
                 tokens.add(new Token(TokenType.NewLine, "\n"));
                 parser_pos++;
                 continue;
             }
 
-            if (sourceCode.charAt(parser_pos) == '\'') {
+            if (ch == '\'') {
                 this.tokenizeChar();
+                continue;
+            }
+
+            if (isAlphaUnderscore(ch)) {
+                tokens.add(new Token(TokenType.Identifier, readAlphaNumUnderscoreSequence()));
                 continue;
             }
 
@@ -143,5 +159,38 @@ public class Tokenizer {
         parser_pos++;
 
         tokens.add(new Token(TokenType.Char, value));
+    }
+
+    private boolean isNum(char ch) {
+        return (ch >= '0') && (ch <= '9');
+    }
+
+    private boolean isAlphaUnderscore(char ch) {
+        if ((ch >= 'a') && (ch <= 'z')) {
+            return true;
+        }
+
+        if ((ch >= 'A') && (ch <= 'Z')) {
+            return true;
+        }
+
+        return ch == '_';
+    }
+
+    private boolean isAlphaNumUnderscore(char ch) {
+        return isNum(ch) || isAlphaUnderscore(ch);
+    }
+
+    private String readAlphaNumUnderscoreSequence() {
+        String res = "";
+        while (parser_pos < sourceCode.length()) {
+            char ch = sourceCode.charAt(parser_pos);
+            if (!isAlphaNumUnderscore(ch)) {
+                break;
+            }
+            res += ch;
+            parser_pos++;
+        }
+        return res;
     }
 }
