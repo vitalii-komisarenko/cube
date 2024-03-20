@@ -3,11 +3,13 @@ package cube.test;
 import cube.Tokenizer;
 import cube.Tokenizer.Token;
 import cube.Tokenizer.TokenType;
+import cube.Tokenizer.TokenizerException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,7 +35,7 @@ public class TokenizerTest {
                     new Token(TokenType.NewLine, "\n")
                 ))));
         }
-        catch (Tokenizer.TokenizerException e) {
+        catch (TokenizerException e) {
             fail("TokenizerException");
         }
 
@@ -45,7 +47,7 @@ public class TokenizerTest {
                     new Token(TokenType.NewLine, "\n")
                 ))));
         }
-        catch (Tokenizer.TokenizerException e) {
+        catch (TokenizerException e) {
             fail("TokenizerException");
         }
 
@@ -64,5 +66,47 @@ public class TokenizerTest {
         catch (Tokenizer.TokenizerException e) {
             fail("TokenizerException");
         }
+    }
+
+    @Test
+    public void testChars() {
+        try {
+            assertTrue(EqualsBuilder.reflectionEquals(
+                new Tokenizer("'a'").tokens,
+                new ArrayList<>(Arrays.asList(
+                    new Token(TokenType.Char, "a")
+                ))));
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            assertTrue(EqualsBuilder.reflectionEquals(
+                new Tokenizer("'\\''").tokens,
+                new ArrayList<>(Arrays.asList(
+                    new Token(TokenType.Char, "'")
+                ))));
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            assertTrue(EqualsBuilder.reflectionEquals(
+                new Tokenizer("'\\\\'").tokens,
+                new ArrayList<>(Arrays.asList(
+                    new Token(TokenType.Char, "\\")
+                ))));
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        assertThrows(TokenizerException.class, () -> new Tokenizer("'"));
+        assertThrows(TokenizerException.class, () -> new Tokenizer("''"));
+        assertThrows(TokenizerException.class, () -> new Tokenizer("'a"));
+        assertThrows(TokenizerException.class, () -> new Tokenizer("'\\"));
+        assertThrows(TokenizerException.class, () -> new Tokenizer("'\\a"));
     }
 }
