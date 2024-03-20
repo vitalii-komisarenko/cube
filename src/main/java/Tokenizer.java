@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 
 public class Tokenizer {
-    enum TokenType {
+    public enum TokenType {
         MacroIdentifier,      // #include, #ifdef
         Octothorp,            // #
         DoubleOctothorp,      // ##
@@ -37,9 +37,14 @@ public class Tokenizer {
         MoreOrEqual,          // >=
     }
 
-    public class Token {
+    public static class Token {
         TokenType type;
         String value;
+
+        public Token(TokenType type, String value) {
+            this.type = type;
+            this.value = value;
+        }
     }
 
     public class TokenizerException extends Exception {
@@ -50,6 +55,12 @@ public class Tokenizer {
 
     public Tokenizer(String sourceCode) throws TokenizerException {
         while (parser_pos < sourceCode.length()) {
+            if (sourceCode.charAt(parser_pos) == '\n') {
+                tokens.add(new Token(TokenType.NewLine, "\n"));
+                parser_pos++;
+                continue;
+            }
+
             throw new TokenizerException();
         }
     }
