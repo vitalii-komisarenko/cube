@@ -1,5 +1,6 @@
 # Compiled files
 *.class
+target
 
 # Editor files
 *.swp

@@ -1,7 +1,9 @@
+package cube;
+
 import java.util.ArrayList;
 
 
-class Tokenizer {
+public class Tokenizer {
     enum TokenType {
         MacroIdentifier,      // #include, #ifdef
         Octothorp,            // #
@@ -35,12 +37,12 @@ class Tokenizer {
         MoreOrEqual,          // >=
     }
 
-    class Token {
+    public class Token {
         TokenType type;
         String value;
     }
 
-    class TokenizerException extends Exception {
+    public class TokenizerException extends Exception {
         public TokenizerException() {
             super("Tokenizer Exception");
         }
