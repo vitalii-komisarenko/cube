@@ -152,4 +152,11 @@ public class TokenizerTest {
         checkParsingToSingleToken("{", TokenType.OpeningCurlyBracket, "{");
         checkParsingToSingleToken("}", TokenType.ClosingCurlyBracket, "}");
     }
+
+    @Test
+    void testPunctuation() {
+        checkParsingToSingleToken(",", TokenType.Comma, ",");
+        checkParsingToSingleToken(":", TokenType.Colon, ":");
+        checkParsingToSingleToken(";", TokenType.Semicolon, ";");
+    }
 }

@@ -29,6 +29,8 @@ public class Tokenizer {
         Slash,                // /
         Ampersand,            // &
         Comma,                // ,
+        Colon,                // :
+        Semicolon,            // ;
         Less,                 // <
         LessOrEqual,          // <=
         Assignment,           // =
@@ -134,6 +136,25 @@ public class Tokenizer {
                 parser_pos++;
                 continue;
             }
+
+            if (ch == ',') {
+                tokens.add(new Token(TokenType.Comma, ","));
+                parser_pos++;
+                continue;
+            }
+
+            if (ch == ':') {
+                tokens.add(new Token(TokenType.Colon, ":"));
+                parser_pos++;
+                continue;
+            }
+
+            if (ch == ';') {
+                tokens.add(new Token(TokenType.Semicolon, ";"));
+                parser_pos++;
+                continue;
+            }
+
 
             if (isAlphaUnderscore(ch)) {
                 tokens.add(new Token(TokenType.Identifier, readAlphaNumUnderscoreSequence()));
