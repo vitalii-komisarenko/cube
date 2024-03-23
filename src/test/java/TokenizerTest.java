@@ -135,4 +135,10 @@ public class TokenizerTest {
             fail("TokenizerException");
         }
     }
+
+    @Test
+    public void testOctothorps() {
+        checkParsingToSingleToken("#", TokenType.Octothorp, "#");
+        checkParsingToSingleToken("##", TokenType.DoubleOctothorp, "##");
+    }
 }

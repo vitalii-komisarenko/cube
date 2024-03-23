@@ -10,7 +10,7 @@ public class Tokenizer {
         DoubleOctothorp,      // ##
         NewLine,              // \n
 
-        Identifier,          // int, i, return etc.
+        Identifier,           // int, i, return etc.
         Char,                 // 'a'
         String,               // "string"
         Integer,              // 123
@@ -81,6 +81,18 @@ public class Tokenizer {
 
             if (ch == '"') {
                 this.tokenizeString();
+                continue;
+            }
+
+            if (ch == '#') {
+                parser_pos++;
+                if ((parser_pos < sourceCode.length()) && sourceCode.charAt(parser_pos) == '#') {
+                    parser_pos++;
+                    tokens.add(new Token(TokenType.DoubleOctothorp, "##"));
+                }
+                else {
+                    tokens.add(new Token(TokenType.Octothorp, "#"));
+                }
                 continue;
             }
 
