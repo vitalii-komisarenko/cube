@@ -88,38 +88,9 @@ public class TokenizerTest {
 
     @Test
     public void testChars() {
-        try {
-            assertTrue(EqualsBuilder.reflectionEquals(
-                new Tokenizer("'a'").tokens,
-                new ArrayList<>(Arrays.asList(
-                    new Token(TokenType.Char, "a")
-                ))));
-        }
-        catch (TokenizerException e) {
-            fail("TokenizerException");
-        }
-
-        try {
-            assertTrue(EqualsBuilder.reflectionEquals(
-                new Tokenizer("'\\''").tokens,
-                new ArrayList<>(Arrays.asList(
-                    new Token(TokenType.Char, "'")
-                ))));
-        }
-        catch (TokenizerException e) {
-            fail("TokenizerException");
-        }
-
-        try {
-            assertTrue(EqualsBuilder.reflectionEquals(
-                new Tokenizer("'\\\\'").tokens,
-                new ArrayList<>(Arrays.asList(
-                    new Token(TokenType.Char, "\\")
-                ))));
-        }
-        catch (TokenizerException e) {
-            fail("TokenizerException");
-        }
+        checkParsingToSingleToken("'a'", TokenType.Char, "a");
+        checkParsingToSingleToken("'\\''", TokenType.Char, "'");
+        checkParsingToSingleToken("'\\\\'", TokenType.Char, "\\");
 
         assertThrows(TokenizerException.class, () -> new Tokenizer("'"));
         assertThrows(TokenizerException.class, () -> new Tokenizer("''"));
