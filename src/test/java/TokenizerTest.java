@@ -141,4 +141,14 @@ public class TokenizerTest {
         checkParsingToSingleToken("#", TokenType.Octothorp, "#");
         checkParsingToSingleToken("##", TokenType.DoubleOctothorp, "##");
     }
+
+    @Test
+    public void testBrackets() {
+        checkParsingToSingleToken("(", TokenType.OpenRoundBracket, "(");
+        checkParsingToSingleToken(")", TokenType.ClosingRoundBracket, ")");
+        checkParsingToSingleToken("[", TokenType.OpeningSquareBracket, "[");
+        checkParsingToSingleToken("]", TokenType.ClosingSquareBracket, "]");
+        checkParsingToSingleToken("{", TokenType.OpeningCurlyBracket, "{");
+        checkParsingToSingleToken("}", TokenType.ClosingCurlyBracket, "}");
+    }
 }

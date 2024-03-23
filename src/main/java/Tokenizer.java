@@ -96,6 +96,42 @@ public class Tokenizer {
                 continue;
             }
 
+            if (ch == '(') {
+                tokens.add(new Token(TokenType.OpenRoundBracket, "("));
+                parser_pos++;
+                continue;
+            }
+
+            if (ch == ')') {
+                tokens.add(new Token(TokenType.ClosingRoundBracket, ")"));
+                parser_pos++;
+                continue;
+            }
+
+            if (ch == '[') {
+                tokens.add(new Token(TokenType.OpeningSquareBracket, "["));
+                parser_pos++;
+                continue;
+            }
+
+            if (ch == ']') {
+                tokens.add(new Token(TokenType.ClosingSquareBracket, "]"));
+                parser_pos++;
+                continue;
+            }
+
+            if (ch == '{') {
+                tokens.add(new Token(TokenType.OpeningCurlyBracket, "{"));
+                parser_pos++;
+                continue;
+            }
+
+            if (ch == '}') {
+                tokens.add(new Token(TokenType.ClosingCurlyBracket, "}"));
+                parser_pos++;
+                continue;
+            }
+
             if (isAlphaUnderscore(ch)) {
                 tokens.add(new Token(TokenType.Identifier, readAlphaNumUnderscoreSequence()));
                 continue;
