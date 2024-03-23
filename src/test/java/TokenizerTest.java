@@ -140,6 +140,7 @@ public class TokenizerTest {
     public void testOctothorps() {
         checkParsingToSingleToken("#", TokenType.Octothorp, "#");
         checkParsingToSingleToken("##", TokenType.DoubleOctothorp, "##");
+        checkParsingToSingleToken("#define", TokenType.MacroIdentifier, "#define");
     }
 
     @Test

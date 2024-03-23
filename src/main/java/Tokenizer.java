@@ -90,6 +90,9 @@ public class Tokenizer {
                     parser_pos++;
                     tokens.add(new Token(TokenType.DoubleOctothorp, "##"));
                 }
+                else if ((parser_pos < sourceCode.length()) && isAlphaUnderscore(sourceCode.charAt(parser_pos))) {
+                    tokens.add(new Token(TokenType.MacroIdentifier, "#" + readAlphaNumUnderscoreSequence()));
+                }
                 else {
                     tokens.add(new Token(TokenType.Octothorp, "#"));
                 }
