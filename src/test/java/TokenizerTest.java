@@ -16,6 +16,24 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 
 public class TokenizerTest {
+    void checkParsingToSingleToken(String codeToTokenize, TokenType expectedType, String expectedValue) {
+        try {
+            ArrayList<Token> actual = new Tokenizer(codeToTokenize).tokens;
+            if (actual.size() != 1) {
+                fail("Token list size is not 1");
+            }
+            if (!actual.get(0).type.equals(expectedType)) {
+                fail("Token type mismatch");
+            }
+            if (!actual.get(0).value.equals(expectedValue)) {
+                fail("Token value mismatch");
+            }
+        }
+        catch (Tokenizer.TokenizerException e) {
+            fail("TokenizerException");
+        }
+    }
+
     @Test
     public void testEmptyInput() {
         try {
