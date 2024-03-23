@@ -99,65 +99,48 @@ public class Tokenizer {
         }
     }
 
-    private void tokenizeChar() throws TokenizerException {
-        parser_pos++;  // skip opening '
+    private String readBackslashedOrOrdinaryChar() throws TokenizerException {
         assertParserNotOutOfBounds();
 
-        // Parse backslash-escaped chars like '\n'
-        if (sourceCode.charAt(parser_pos) == '\\') {
-            parser_pos++; // skip backslash
-            assertParserNotOutOfBounds();
-
-            String value;
-            switch (sourceCode.charAt(parser_pos)) {
-                case '\\': {
-                    value = "\\";
-                    break;
-                }
-                case '\'': {
-                    value = "'";
-                    break;
-                }
-                case 'n': {
-                    value = "\n";
-                    break;
-                }
-                case 'r': {
-                    value = "\r";
-                    break;
-                }
-                case 't': {
-                    value = "\t";
-                    break;
-                }
-                default: {
-                    throw new TokenizerException();
-                }
-            }
-
+        if (sourceCode.charAt(parser_pos) != '\\') {
+            String value = new Character(sourceCode.charAt(parser_pos)).toString();
             parser_pos++;
-            assertParserNotOutOfBounds();
-
-            if (sourceCode.charAt(parser_pos) != '\'') {
-                throw new TokenizerException();
-            }
-            parser_pos++;
-
-            tokens.add(new Token(TokenType.Char, value));
-            return;
+            return value;
         }
 
-        // Parse chars without escaping ('a', '1' etc.)
-        String value = new Character(sourceCode.charAt(parser_pos)).toString();
+        // Parse backslash-escaped chars like '\n'
+        parser_pos++; // skip backslash
+        assertParserNotOutOfBounds();
 
+        char escaped_symbol = sourceCode.charAt(parser_pos);
         parser_pos++;
+
+        switch (escaped_symbol) {
+            case '\\':
+                return "\\";
+            case '\'':
+                return "'";
+            case 'n':
+                return "\n";
+            case 'r':
+                return "\r";
+            case 't':
+                return "\t";
+            default:
+                throw new TokenizerException();
+        }
+    }
+
+    private void tokenizeChar() throws TokenizerException {
+        parser_pos++;  // skip opening '
+        String value = readBackslashedOrOrdinaryChar();
+
         assertParserNotOutOfBounds();
 
         if (sourceCode.charAt(parser_pos) != '\'') {
             throw new TokenizerException();
         }
-        parser_pos++;
-
+        parser_pos++; // skip closing '
         tokens.add(new Token(TokenType.Char, value));
     }
 
