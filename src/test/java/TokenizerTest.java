@@ -100,6 +100,18 @@ public class TokenizerTest {
     }
 
     @Test
+    public void testStrings() {
+        checkParsingToSingleToken("\"\"", TokenType.String, "");
+        checkParsingToSingleToken("\" \"", TokenType.String, " ");
+        checkParsingToSingleToken("\"\\\\\"", TokenType.String, "\\");
+        checkParsingToSingleToken("\"\\\"\"", TokenType.String, "\"");
+        checkParsingToSingleToken("\"'\"", TokenType.String, "'");
+
+        assertThrows(TokenizerException.class, () -> new Tokenizer("\""));
+        assertThrows(TokenizerException.class, () -> new Tokenizer("\"\\"));
+    }
+
+    @Test
     public void testIdentifiers() {
         try {
             assertTrue(EqualsBuilder.reflectionEquals(

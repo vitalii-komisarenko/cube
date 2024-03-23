@@ -79,6 +79,11 @@ public class Tokenizer {
                 continue;
             }
 
+            if (ch == '"') {
+                this.tokenizeString();
+                continue;
+            }
+
             if (isAlphaUnderscore(ch)) {
                 tokens.add(new Token(TokenType.Identifier, readAlphaNumUnderscoreSequence()));
                 continue;
@@ -120,6 +125,8 @@ public class Tokenizer {
                 return "\\";
             case '\'':
                 return "'";
+            case '"':
+                return "\"";
             case 'n':
                 return "\n";
             case 'r':
@@ -142,6 +149,23 @@ public class Tokenizer {
         }
         parser_pos++; // skip closing '
         tokens.add(new Token(TokenType.Char, value));
+    }
+
+    private void tokenizeString() throws TokenizerException {
+        parser_pos++;  // skip opening "
+        String value = "";
+
+        while (true) {
+            assertParserNotOutOfBounds();
+
+            if (sourceCode.charAt(parser_pos) == '"') {
+                parser_pos++; // skip closing "
+                tokens.add(new Token(TokenType.String, value));
+                return;
+            }
+
+            value += readBackslashedOrOrdinaryChar();
+        }
     }
 
     private boolean isNum(char ch) {
