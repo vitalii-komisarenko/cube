@@ -128,6 +128,26 @@ public class MacroProcessor {
         tokens = new_tokens;
     }
 
+    ArrayList<Token> readMacroParameter() throws MacroProcessorException {
+        ArrayList<Token> res = new ArrayList<Token>();
+        assertParserNotOutOfBounds();
+        Token token = tokens.get(parser_pos++);
+        res.add(token);
+
+        if (token.type != TokenType.OpenRoundBracket) {
+            return res;
+        }
+
+        for(; parser_pos < tokens.size(); ++parser_pos) {
+            res.addAll(readMacroParameter());
+            if (tokens.get(parser_pos).type == TokenType.ClosingRoundBracket) {
+                return res;
+            }
+        }
+
+        throw new MacroProcessorException();
+    }
+
     private int parser_pos;
     public ArrayList<Token> tokens;
     private HashMap<String, ArrayList<Token>> macros_without_brackets;
