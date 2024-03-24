@@ -61,6 +61,7 @@ public class MacroProcessor {
         }
 
         String macro_type = tokens.get(parser_pos).value;
+        int macro_beginning_index = parser_pos;
 
         parser_pos++;
         assertParserNotOutOfBounds();
@@ -73,7 +74,7 @@ public class MacroProcessor {
         parser_pos++;
 
         ArrayList<Token> macro_paramaters = new ArrayList<Token>(); // including opening and closing brackets
-        if (tokens.get(parser_pos).type == TokenType.OpenRoundBracket) {
+        if ((parser_pos < tokens.size()) && (tokens.get(parser_pos).type == TokenType.OpenRoundBracket)) {
             for (; parser_pos < tokens.size(); ++parser_pos) {
                 assertParserNotOutOfBounds();
                 Token token = tokens.get(parser_pos);
@@ -98,10 +99,11 @@ public class MacroProcessor {
             }
             macro_replacement.add(token);
         }
-        ++parser_pos;
+
+        tokens.subList(macro_beginning_index, parser_pos).clear();
 
         if (macro_type == "#define") {
-            processMacroWithoutBrackets(macro_name, macro_replacement, parser_pos);
+            processMacroWithoutBrackets(macro_name, macro_replacement, macro_beginning_index);
         }
         else {
             throw new MacroProcessorException();
@@ -110,7 +112,7 @@ public class MacroProcessor {
 
     void processMacroWithoutBrackets(String macro_name, ArrayList<Token> macro_replacement, int starting_pos) {
         ArrayList<Token> new_tokens = new ArrayList<Token>();
-        for (int i = 0; i < starting_pos; ++i) {
+        for (int i = 0; (i < starting_pos) && (i < tokens.size()); ++i) {
             new_tokens.add(tokens.get(i));
         }
         for (int i = starting_pos; i < tokens.size(); ++i) {
