@@ -34,6 +34,17 @@ public class TokenizerTest {
         }
     }
 
+    static public void checkTokenListsEqual(ArrayList<Token> first, ArrayList<Token> second) {
+        if (first.size() != second.size()) {
+            fail("Token lists have different size");
+        }
+        for (int i = 0; i < first.size(); ++i) {
+            if (!first.get(i).equals(second.get(i))) {
+                fail("Tokens differ");
+            }
+        }
+    }
+
     @Test
     public void testEmptyInput() {
         try {
