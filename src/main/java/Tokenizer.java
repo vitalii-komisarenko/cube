@@ -56,6 +56,11 @@ public class Tokenizer {
             Token other = (Token) object;
             return this.type.equals(other.type) && this.value.equals(other.value);
         }
+
+        @Override
+        public String toString() {
+            return "Token [ " + type + " " + value + " ]";
+        }
     }
 
     public class TokenizerException extends Exception {
