@@ -95,6 +95,7 @@ public class MacroProcessor {
         for (; parser_pos < tokens.size(); ++parser_pos) {
             Token token = tokens.get(parser_pos);
             if (token.type == TokenType.NewLine) {
+                ++parser_pos;
                 break;
             }
             macro_replacement.add(token);
