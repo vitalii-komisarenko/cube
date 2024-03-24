@@ -310,6 +310,8 @@ public class MacroProcessorTest {
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Identifier, "printf"),
                 new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.Identifier, "format"),
+                new Token(TokenType.Comma, ","),
                 new Token(TokenType.Identifier, "text"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.NewLine, "\n"),

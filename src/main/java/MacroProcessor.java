@@ -73,12 +73,12 @@ public class MacroProcessor {
 
         parser_pos++;
 
-        ArrayList<Token> macro_paramaters = new ArrayList<Token>(); // including opening and closing brackets
+        ArrayList<Token> raw_macro_paramaters = new ArrayList<Token>(); // including opening and closing brackets
         if ((parser_pos < tokens.size()) && (tokens.get(parser_pos).type == TokenType.OpenRoundBracket)) {
             for (; parser_pos < tokens.size(); ++parser_pos) {
                 assertParserNotOutOfBounds();
                 Token token = tokens.get(parser_pos);
-                macro_paramaters.add(token);
+                raw_macro_paramaters.add(token);
                 if (token.type == TokenType.ClosingRoundBracket) {
                     break;
                 }
@@ -102,9 +102,27 @@ public class MacroProcessor {
         }
 
         tokens.subList(macro_beginning_index, parser_pos).clear();
+        parser_pos = macro_beginning_index;
 
         if (macro_type == "#define") {
-            processMacroWithoutBrackets(macro_name, macro_replacement, macro_beginning_index);
+            if (raw_macro_paramaters.size() == 0) {
+                processMacroWithoutBrackets(macro_name, macro_replacement, macro_beginning_index);
+            }
+            else {
+                ArrayList<Token> macro_parameters = new ArrayList<Token>();
+                for (int i = 1; i < raw_macro_paramaters.size() - 1; ++i) {
+                    Token token = raw_macro_paramaters.get(i);
+                    if (i % 2 == 0) {
+                        if (token.type != TokenType.Comma) {
+                            throw new MacroProcessorException();
+                        }
+                    }
+                    else {
+                        macro_parameters.add(token);
+                    }
+                }
+                processMacroWithBrackets(macro_name, macro_parameters, macro_replacement, macro_beginning_index);
+            }
         }
         else {
             throw new MacroProcessorException();
@@ -146,6 +164,47 @@ public class MacroProcessor {
         }
 
         throw new MacroProcessorException();
+    }
+
+    void processMacroWithBrackets(String macro_name,
+                                  ArrayList<Token> macro_paramaters,
+                                  ArrayList<Token> macro_replacement,
+                                  int starting_pos) throws MacroProcessorException {
+        ArrayList<Token> new_tokens = new ArrayList<Token>();
+        for (int parser_pos = 0; (parser_pos < starting_pos) && (parser_pos < tokens.size()); ++parser_pos) {
+            new_tokens.add(tokens.get(parser_pos));
+        }
+
+        for (; parser_pos + macro_replacement.size() < tokens.size(); ++parser_pos) {
+            Token token = tokens.get(parser_pos);
+            if ((token.type != TokenType.Identifier) || (!token.value.equals(macro_name))) {
+                continue;
+            }
+
+            int macro_replacement_start = parser_pos;
+            parser_pos++; // skip macro name
+
+            // check the opening bracket
+            if (tokens.get(parser_pos++).type != TokenType.OpenRoundBracket) {
+                throw new MacroProcessorException();
+            }
+
+            ArrayList<ArrayList<Token>> caller_macro_params = new ArrayList<ArrayList<Token>>();
+
+            for (int i = 0; i < macro_paramaters.size() - 2; ++i) {
+                caller_macro_params.add(readMacroParameter());
+                if ((i != macro_paramaters.size() - 1) && (tokens.get(parser_pos++ + 1).type != TokenType.Comma)) {
+                    throw new MacroProcessorException();
+                }
+            }
+
+            // check the closing bracket
+            if (tokens.get(parser_pos + macro_paramaters.size() - 2).type != TokenType.OpenRoundBracket) {
+                throw new MacroProcessorException();
+            }
+        }
+
+        tokens = new_tokens;
     }
 
     private int parser_pos;
