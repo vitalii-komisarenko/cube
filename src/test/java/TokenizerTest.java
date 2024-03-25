@@ -155,19 +155,44 @@ public class TokenizerTest {
     }
 
     @Test
-    public void testBrackets() {
+    public void testFixedToken() {
         checkParsingToSingleToken("(", TokenType.OpeningRoundBracket, "(");
         checkParsingToSingleToken(")", TokenType.ClosingRoundBracket, ")");
         checkParsingToSingleToken("[", TokenType.OpeningSquareBracket, "[");
         checkParsingToSingleToken("]", TokenType.ClosingSquareBracket, "]");
         checkParsingToSingleToken("{", TokenType.OpeningCurlyBracket, "{");
         checkParsingToSingleToken("}", TokenType.ClosingCurlyBracket, "}");
-    }
-
-    @Test
-    void testPunctuation() {
         checkParsingToSingleToken(",", TokenType.Comma, ",");
         checkParsingToSingleToken(":", TokenType.Colon, ":");
         checkParsingToSingleToken(";", TokenType.Semicolon, ";");
+
+        checkParsingToSingleToken("++", TokenType.Increment, "++");
+        checkParsingToSingleToken("+=", TokenType.AddAssign, "+=");
+        checkParsingToSingleToken("+", TokenType.Plus, "+");
+
+        checkParsingToSingleToken("--", TokenType.Decrement, "--");
+        checkParsingToSingleToken("-=", TokenType.SubstractAssign, "-=");
+        checkParsingToSingleToken("->", TokenType.PointerDereference, "->");
+        checkParsingToSingleToken("-", TokenType.Minus, "-");
+
+        checkParsingToSingleToken("*=", TokenType.MultipleAssign, "*=");
+        checkParsingToSingleToken("*", TokenType.Asterisk, "*");
+
+        checkParsingToSingleToken("/=", TokenType.DivideAssign, "/=");
+        checkParsingToSingleToken("/", TokenType.Slash, "/");
+
+        checkParsingToSingleToken("%=", TokenType.Modulo, "%=");
+        checkParsingToSingleToken("%", TokenType.ModuloAssign, "%");
+
+        checkParsingToSingleToken("<<", TokenType.ShiftLeft, "<<");
+        checkParsingToSingleToken("<=", TokenType.LessOrEqual, "<=");
+        checkParsingToSingleToken("<", TokenType.Less, "<");
+
+        checkParsingToSingleToken(">>", TokenType.ShiftRight, ">>");
+        checkParsingToSingleToken(">=", TokenType.MoreOrEqual, ">=");
+        checkParsingToSingleToken(">", TokenType.More, ">");
+
+        checkParsingToSingleToken("==", TokenType.IsEqual, "==");
+        checkParsingToSingleToken("=", TokenType.Assignment, "=");
     }
 }

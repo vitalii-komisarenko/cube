@@ -27,6 +27,14 @@ public class Tokenizer {
         Minus,                // -
         Asterisk,             // *
         Slash,                // /
+        Modulo,               // %
+        AddAssign,            // +=
+        SubstractAssign,      // -=
+        MultipleAssign,       // *=
+        DivideAssign,         // /=
+        ModuloAssign,         // %=
+        Increment,            // ++
+        Decrement,            // --
         Ampersand,            // &
         Comma,                // ,
         Colon,                // :
@@ -37,6 +45,9 @@ public class Tokenizer {
         IsEqual,              // ==
         More,                 // >
         MoreOrEqual,          // >=
+        ShiftLeft,            // <<
+        ShiftRight,           // >>
+        PointerDereference,   // ->
     }
 
     public static class Token {
@@ -142,6 +153,69 @@ public class Tokenizer {
                 continue;
             }
 
+            if (tokenizeIfPrefix("++", TokenType.Increment))
+                continue;
+
+            if (tokenizeIfPrefix("+=", TokenType.AddAssign))
+                continue;
+
+            if (tokenizeIfPrefix("+", TokenType.Plus))
+                continue;
+
+            if (tokenizeIfPrefix("--", TokenType.Decrement))
+                continue;
+
+            if (tokenizeIfPrefix("-=", TokenType.SubstractAssign))
+                continue;
+
+            if (tokenizeIfPrefix("->", TokenType.PointerDereference))
+                continue;
+
+            if (tokenizeIfPrefix("-", TokenType.Minus))
+                continue;
+
+            if (tokenizeIfPrefix("*=", TokenType.MultipleAssign))
+                continue;
+
+            if (tokenizeIfPrefix("*", TokenType.Asterisk))
+                continue;
+
+            if (tokenizeIfPrefix("/=", TokenType.DivideAssign))
+                continue;
+
+            if (tokenizeIfPrefix("/", TokenType.Slash))
+                continue;
+
+            if (tokenizeIfPrefix("%=", TokenType.Modulo))
+                continue;
+
+            if (tokenizeIfPrefix("%", TokenType.ModuloAssign))
+                continue;
+
+            if (tokenizeIfPrefix("<<", TokenType.ShiftLeft))
+                continue;
+
+            if (tokenizeIfPrefix("<=", TokenType.LessOrEqual))
+                continue;
+
+            if (tokenizeIfPrefix("<", TokenType.Less))
+                continue;
+
+            if (tokenizeIfPrefix(">>", TokenType.ShiftRight))
+                continue;
+
+            if (tokenizeIfPrefix(">=", TokenType.MoreOrEqual))
+                continue;
+
+            if (tokenizeIfPrefix(">", TokenType.More))
+                continue;
+
+            if (tokenizeIfPrefix("==", TokenType.IsEqual))
+                continue;
+
+            if (tokenizeIfPrefix("=", TokenType.Assignment))
+                continue;
+
             if (ch == ',') {
                 tokens.add(new Token(TokenType.Comma, ","));
                 parser_pos++;
@@ -179,6 +253,19 @@ public class Tokenizer {
         if (parser_pos >= sourceCode.length()) {
             throw new TokenizerException();
         }
+    }
+
+    private boolean tokenizeIfPrefix(String prefix, TokenType type) {
+        if (parser_pos + prefix.length() > sourceCode.length()) {
+            return false;
+        }
+        String actual_prefix = sourceCode.substring(parser_pos, parser_pos + prefix.length());
+        if (actual_prefix.equals(prefix)) {
+            tokens.add(new Token(type, prefix));
+            parser_pos += prefix.length();
+            return true;
+        }
+        return false;
     }
 
     private String readBackslashedOrOrdinaryChar() throws TokenizerException {
