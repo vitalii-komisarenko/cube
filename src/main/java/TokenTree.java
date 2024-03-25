@@ -69,6 +69,10 @@ public class TokenTree {
         tokens_parsed = parser_pos - starting_pos + 1;
     }
 
+    public TokenTree(ArrayList<Token> tokens) {
+        this(tokens, 0, TokenTreeNodeType.TopLevel);
+    }
+
     public TokenTreeNodeType type;
     public Token token;
     public ArrayList<TokenTree> children = new ArrayList<TokenTree>();
