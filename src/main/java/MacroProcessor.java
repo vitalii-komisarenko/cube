@@ -74,7 +74,7 @@ public class MacroProcessor {
         parser_pos++;
 
         ArrayList<Token> raw_macro_paramaters = new ArrayList<Token>(); // including opening and closing brackets
-        if ((parser_pos < tokens.size()) && (tokens.get(parser_pos).type == TokenType.OpenRoundBracket)) {
+        if ((parser_pos < tokens.size()) && (tokens.get(parser_pos).type == TokenType.OpeningRoundBracket)) {
             for (; parser_pos < tokens.size(); ++parser_pos) {
                 assertParserNotOutOfBounds();
                 Token token = tokens.get(parser_pos);
@@ -152,7 +152,7 @@ public class MacroProcessor {
         Token token = tokens.get(parser_pos++);
         res.add(token);
 
-        if (token.type != TokenType.OpenRoundBracket) {
+        if (token.type != TokenType.OpeningRoundBracket) {
             return res;
         }
 
@@ -185,7 +185,7 @@ public class MacroProcessor {
             parser_pos++; // skip macro name
 
             // check the opening bracket
-            if (tokens.get(parser_pos++).type != TokenType.OpenRoundBracket) {
+            if (tokens.get(parser_pos++).type != TokenType.OpeningRoundBracket) {
                 throw new MacroProcessorException();
             }
 
@@ -199,7 +199,7 @@ public class MacroProcessor {
             }
 
             // check the closing bracket
-            if (tokens.get(parser_pos + macro_paramaters.size() - 2).type != TokenType.OpenRoundBracket) {
+            if (tokens.get(parser_pos + macro_paramaters.size() - 2).type != TokenType.OpeningRoundBracket) {
                 throw new MacroProcessorException();
             }
         }
