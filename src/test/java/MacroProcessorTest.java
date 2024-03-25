@@ -131,7 +131,7 @@ public class MacroProcessorTest {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.MacroIdentifier, "#define"),
                 new Token(TokenType.Identifier, "sample_macro"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")")
             ));
             ArrayList<Token> expected_tokens = new ArrayList<Token>();
@@ -149,7 +149,7 @@ public class MacroProcessorTest {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.MacroIdentifier, "#define"),
                 new Token(TokenType.Identifier, "sample_macro"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.Identifier, "param1"),
                 new Token(TokenType.ClosingRoundBracket, ")")
             ));
@@ -168,7 +168,7 @@ public class MacroProcessorTest {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.MacroIdentifier, "#define"),
                 new Token(TokenType.Identifier, "sample_macro"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.Identifier, "param1"),
                 new Token(TokenType.Comma, ","),
                 new Token(TokenType.Identifier, "param2"),
@@ -193,7 +193,7 @@ public class MacroProcessorTest {
                 new Token(TokenType.NewLine, "\n"),
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "sample_macro"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.ClosingCurlyBracket, "}")
@@ -201,7 +201,7 @@ public class MacroProcessorTest {
             ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "main"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.ClosingCurlyBracket, "}")
@@ -220,15 +220,15 @@ public class MacroProcessorTest {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.MacroIdentifier, "#define"),
                 new Token(TokenType.Identifier, "sample_macro"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Identifier, "main"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.NewLine, "\n"),
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "sample_macro"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.ClosingCurlyBracket, "}")
@@ -236,7 +236,7 @@ public class MacroProcessorTest {
             ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "main"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.ClosingCurlyBracket, "}")
@@ -255,21 +255,21 @@ public class MacroProcessorTest {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.MacroIdentifier, "#define"),
                 new Token(TokenType.Identifier, "print_text"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.Identifier, "text"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Identifier, "printf"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.Identifier, "text"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.NewLine, "\n"),
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "main"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.Identifier, "print_text"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.String, "Hello, World!"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Semicolon, ";"),
@@ -278,11 +278,11 @@ public class MacroProcessorTest {
             ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "main"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.Identifier, "printf"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.String, "Hello, World!"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Semicolon, ";"),
@@ -303,13 +303,13 @@ public class MacroProcessorTest {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.MacroIdentifier, "#define"),
                 new Token(TokenType.Identifier, "print_text"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.Identifier, "format"),
                 new Token(TokenType.Comma, ","),
                 new Token(TokenType.Identifier, "text"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Identifier, "printf"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.Identifier, "format"),
                 new Token(TokenType.Comma, ","),
                 new Token(TokenType.Identifier, "text"),
@@ -317,11 +317,11 @@ public class MacroProcessorTest {
                 new Token(TokenType.NewLine, "\n"),
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "main"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.Identifier, "print_text"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.String, "%s"),
                 new Token(TokenType.Comma, ","),
                 new Token(TokenType.String, "Hello, World!"),
@@ -332,11 +332,11 @@ public class MacroProcessorTest {
             ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
                 new Token(TokenType.Identifier, "void"),
                 new Token(TokenType.Identifier, "main"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.Identifier, "printf"),
-                new Token(TokenType.OpenRoundBracket, "("),
+                new Token(TokenType.OpeningRoundBracket, "("),
                 new Token(TokenType.String, "Hello, World!"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Semicolon, ";"),

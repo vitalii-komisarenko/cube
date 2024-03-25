@@ -156,7 +156,7 @@ public class TokenizerTest {
 
     @Test
     public void testBrackets() {
-        checkParsingToSingleToken("(", TokenType.OpenRoundBracket, "(");
+        checkParsingToSingleToken("(", TokenType.OpeningRoundBracket, "(");
         checkParsingToSingleToken(")", TokenType.ClosingRoundBracket, ")");
         checkParsingToSingleToken("[", TokenType.OpeningSquareBracket, "[");
         checkParsingToSingleToken("]", TokenType.ClosingSquareBracket, "]");

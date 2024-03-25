@@ -16,7 +16,7 @@ public class Tokenizer {
         Integer,              // 123
         Float,                // 1.23
 
-        OpenRoundBracket,     // (
+        OpeningRoundBracket,  // (
         ClosingRoundBracket,  // )
         OpeningSquareBracket, // [
         ClosingSquareBracket, // ]
@@ -107,7 +107,7 @@ public class Tokenizer {
             }
 
             if (ch == '(') {
-                tokens.add(new Token(TokenType.OpenRoundBracket, "("));
+                tokens.add(new Token(TokenType.OpeningRoundBracket, "("));
                 parser_pos++;
                 continue;
             }
