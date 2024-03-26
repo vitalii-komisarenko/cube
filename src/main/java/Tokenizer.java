@@ -48,6 +48,8 @@ public class Tokenizer {
         ShiftLeft,            // <<
         ShiftRight,           // >>
         PointerDereference,   // ->
+        QuestionMark,         // ?
+        ExclamationMark,      // !
     }
 
     public static class Token {
@@ -214,6 +216,12 @@ public class Tokenizer {
                 continue;
 
             if (tokenizeIfPrefix("=", TokenType.Assignment))
+                continue;
+
+            if (tokenizeIfPrefix("?", TokenType.QuestionMark))
+                continue;
+
+            if (tokenizeIfPrefix("!", TokenType.ExclamationMark))
                 continue;
 
             if (ch == ',') {

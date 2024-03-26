@@ -194,5 +194,8 @@ public class TokenizerTest {
 
         checkParsingToSingleToken("==", TokenType.IsEqual, "==");
         checkParsingToSingleToken("=", TokenType.Assignment, "=");
+
+        checkParsingToSingleToken("?", TokenType.QuestionMark, "?");
+        checkParsingToSingleToken("!", TokenType.ExclamationMark, "!");
     }
 }
