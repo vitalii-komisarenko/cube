@@ -349,4 +349,27 @@ public class MacroProcessorTest {
             fail("MacroProcessorException");
         }
     }
+
+    @Test
+    public void testOneDefineWithoutBracketsCalledFromTwoPlaces() {
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Identifier, "b"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Identifier, "a")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Identifier, "b"),
+                new Token(TokenType.Identifier, "b")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
 }
