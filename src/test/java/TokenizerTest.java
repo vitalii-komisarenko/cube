@@ -198,4 +198,16 @@ public class TokenizerTest {
         checkParsingToSingleToken("?", TokenType.QuestionMark, "?");
         checkParsingToSingleToken("!", TokenType.ExclamationMark, "!");
     }
+
+    @Test
+    public void testSingleTokenNumbers() {
+        checkParsingToSingleToken("0", TokenType.Integer, "0");
+        checkParsingToSingleToken("12345", TokenType.Integer, "12345");
+        checkParsingToSingleToken("0.1", TokenType.Float, "0.1");
+        checkParsingToSingleToken("0.", TokenType.Float, "0.");
+        checkParsingToSingleToken(".1", TokenType.Float, ".1");
+        checkParsingToSingleToken(".1e3", TokenType.Float, ".1e3");
+        checkParsingToSingleToken(".1e+3", TokenType.Float, ".1e+3");
+        checkParsingToSingleToken("5.e-0", TokenType.Float, "5.e-0");
+    }
 }

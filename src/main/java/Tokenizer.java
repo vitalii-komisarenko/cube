@@ -242,6 +242,10 @@ public class Tokenizer {
                 continue;
             }
 
+            if (isNum(ch) || (ch == '.')) {
+                tokens.add(readNumberToken());
+                continue;
+            }
 
             if (isAlphaUnderscore(ch)) {
                 tokens.add(new Token(TokenType.Identifier, readAlphaNumUnderscoreSequence()));
@@ -371,5 +375,110 @@ public class Tokenizer {
             parser_pos++;
         }
         return res;
+    }
+
+    private String readNumericSequence() {
+        String res = "";
+        while (parser_pos < sourceCode.length()) {
+            char ch = sourceCode.charAt(parser_pos);
+            if (!isNum(ch)) {
+                break;
+            }
+            res += ch;
+            parser_pos++;
+        }
+        return res;
+    }
+
+    String readIntegerPartOfNumber() throws TokenizerException {
+        /**
+         * For number .123 it is empty string
+         * For number 123 it is 123
+         * For number 123. it is 123
+         * For number 123.456 it is 123
+         * For number 123e+456 it is 123
+         * For number 123.456e+789 it is 123
+         */
+        char next_char = sourceCode.charAt(parser_pos);
+        if (next_char == '.') {
+            return "";
+        }
+        return readNumericSequence();
+    }
+
+    String readFractionalPartOfNumber() throws TokenizerException {
+        /**
+         * For number .123 it is .123
+         * For number 123 it is empty string
+         * For number 123. it is .
+         * For number 123.456 it is .456
+         * For number 123e+456 it is empty string
+         * For number 123.456e+789 it is .456
+         */
+        if (parser_pos >= sourceCode.length()) {
+            return "";
+        }
+
+        char next_char = sourceCode.charAt(parser_pos);
+        if (next_char != '.') {
+            return "";
+        }
+
+        String res = "" + next_char;
+        parser_pos++;
+
+        res += readNumericSequence();
+        return res;
+    }
+
+    String readExponentialPartOfNumber() throws TokenizerException {
+        /**
+         * Read an exponent part of a number.
+         * It can look like:
+         *    e123
+         *    e+123
+         *    e-123
+         *    E123
+         *    E+123
+         *    E-123
+         *
+         * If the following part does not look like exponent, return empty string
+         */
+        if (parser_pos >= sourceCode.length()) {
+            return "";
+        }
+
+        String res = "";
+
+        char next_char = sourceCode.charAt(parser_pos);
+        if ((next_char != 'e') && (next_char != 'E')) {
+            return "";
+        }
+
+        res += next_char;
+        parser_pos++;
+        assertParserNotOutOfBounds();
+
+        next_char = sourceCode.charAt(parser_pos);
+        if ((next_char == '+') || (next_char == '-')) {
+            res += next_char;
+            parser_pos++;
+        }
+
+        String exponent = readNumericSequence();
+        if (exponent.equals("")) {
+            throw new TokenizerException();
+        }
+        res += exponent;
+
+        return res;
+    }
+
+    Token readNumberToken() throws TokenizerException {
+        String integer_part = readIntegerPartOfNumber();
+        String fractional_part = readFractionalPartOfNumber();
+        String exponential_part = readExponentialPartOfNumber();
+        TokenType type = (fractional_part == "") ? TokenType.Integer : TokenType.Float;
+        return new Token(type, integer_part + fractional_part + exponential_part);
     }
 }
