@@ -474,11 +474,34 @@ public class Tokenizer {
         return res;
     }
 
+    String readTypePartOfNumber() throws TokenizerException {
+        /** Read type part of number such as u, l, ull, f etc. */
+        String type = readAlphaNumUnderscoreSequence();
+        System.out.println("type ===== " + type);
+        if (type.equals(""))
+            return type;
+        if (type.toLowerCase().equals("u"))
+            return type;
+        if (type.toLowerCase().equals("ul"))
+            return type;
+        if (type.toLowerCase().equals("ull"))
+            return type;
+        if (type.toLowerCase().equals("l"))
+            return type;
+        if (type.toLowerCase().equals("ll"))
+            return type;
+        if (type.toLowerCase().equals("f"))
+            return type;
+
+        throw new TokenizerException();
+    }
+
     Token readNumberToken() throws TokenizerException {
         String integer_part = readIntegerPartOfNumber();
         String fractional_part = readFractionalPartOfNumber();
         String exponential_part = readExponentialPartOfNumber();
+        String explciit_type_part = readTypePartOfNumber();
         TokenType type = (fractional_part == "") ? TokenType.Integer : TokenType.Float;
-        return new Token(type, integer_part + fractional_part + exponential_part);
+        return new Token(type, integer_part + fractional_part + exponential_part + explciit_type_part);
     }
 }

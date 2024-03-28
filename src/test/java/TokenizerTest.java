@@ -209,5 +209,9 @@ public class TokenizerTest {
         checkParsingToSingleToken(".1e3", TokenType.Float, ".1e3");
         checkParsingToSingleToken(".1e+3", TokenType.Float, ".1e+3");
         checkParsingToSingleToken("5.e-0", TokenType.Float, "5.e-0");
+        checkParsingToSingleToken("1ull", TokenType.Integer, "1ull");
+        checkParsingToSingleToken("123.456e-4F", TokenType.Float, "123.456e-4F");
+        checkParsingToSingleToken("1.3f", TokenType.Float, "1.3f");
+        checkParsingToSingleToken("1.3e+3f", TokenType.Float, "1.3e+3f");
     }
 }
