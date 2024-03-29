@@ -17,7 +17,7 @@ public class MacroProcessor {
         }
     }
 
-    public class MacroProcessorException extends Exception {
+    public static class MacroProcessorException extends Exception {
         public MacroProcessorException() {
             super("");
         }
@@ -25,6 +25,12 @@ public class MacroProcessor {
 
     private void assertParserNotOutOfBounds() throws MacroProcessorException {
         if (parser_pos >= tokens.size()) {
+            throw new MacroProcessorException();
+        }
+    }
+
+    public static void assertParserNotOutOfBounds(ArrayList<Token> _tokens, int _parser_pos) throws MacroProcessorException {
+        if (_parser_pos >= _tokens.size()) {
             throw new MacroProcessorException();
         }
     }
@@ -146,24 +152,28 @@ public class MacroProcessor {
         tokens = new_tokens;
     }
 
-    ArrayList<Token> readMacroParameter() throws MacroProcessorException {
+    public static ArrayList<Token> readMacroParameter(ArrayList<Token> _tokens, int _parser_pos) throws MacroProcessorException {
         ArrayList<Token> res = new ArrayList<Token>();
-        assertParserNotOutOfBounds();
-        Token token = tokens.get(parser_pos++);
+        assertParserNotOutOfBounds(_tokens, _parser_pos);
+        Token token = _tokens.get(_parser_pos++);
         res.add(token);
 
         if (token.type != TokenType.OpeningRoundBracket) {
             return res;
         }
 
-        for(; parser_pos < tokens.size(); ++parser_pos) {
-            res.addAll(readMacroParameter());
-            if (tokens.get(parser_pos).type == TokenType.ClosingRoundBracket) {
+        for(; _parser_pos < _tokens.size(); ++_parser_pos) {
+            res.addAll(readMacroParameter(_tokens, _parser_pos));
+            if (_tokens.get(_parser_pos).type == TokenType.ClosingRoundBracket) {
                 return res;
             }
         }
 
         throw new MacroProcessorException();
+    }
+
+    ArrayList<Token> readMacroParameter() throws MacroProcessorException {
+        return readMacroParameter(tokens, parser_pos);
     }
 
     public static ArrayList<Token> replaceAllSingleTokensWithMultipleTokens(ArrayList<Token> inputList, Token tokenToReplace, ArrayList<Token> replacement) {
