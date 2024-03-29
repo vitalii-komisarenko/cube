@@ -166,6 +166,20 @@ public class MacroProcessor {
         throw new MacroProcessorException();
     }
 
+    public static ArrayList<Token> replaceAllSingleTokensWithMultipleTokens(ArrayList<Token> inputList, Token tokenToReplace, ArrayList<Token> replacement) {
+        ArrayList<Token> outputList = new ArrayList<Token>();
+        for (int i = 0; i < inputList.size(); ++i) {
+            Token token = inputList.get(i);
+            if (token.equals(tokenToReplace)) {
+                outputList.addAll(replacement);
+            }
+            else {
+                outputList.add(token);
+            }
+        }
+        return outputList;
+    }
+
     void processMacroWithBrackets(String macro_name,
                                   ArrayList<Token> macro_paramaters,
                                   ArrayList<Token> macro_replacement,

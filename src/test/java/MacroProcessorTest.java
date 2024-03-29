@@ -215,6 +215,92 @@ public class MacroProcessorTest {
     }
 
     @Test
+    public void testReplaceAllSingleTokensWithMultipleTokens_replaceWithZeroTokens() {
+        ArrayList<Token> inputList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.Identifier, "a"),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        Token tokenToReplace = new Token(TokenType.Identifier, "a");
+        ArrayList<Token> replacement = new ArrayList<Token>(Arrays.asList(
+        ));
+        ArrayList<Token> expectedList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        ArrayList<Token> actualList = MacroProcessor.replaceAllSingleTokensWithMultipleTokens(inputList, tokenToReplace, replacement);
+        TokenizerTest.checkTokenListsEqual(actualList, expectedList);
+    }
+
+    @Test
+    public void testReplaceAllSingleTokensWithMultipleTokens_replaceWithOneToken() {
+        ArrayList<Token> inputList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.Identifier, "a"),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        Token tokenToReplace = new Token(TokenType.Identifier, "a");
+        ArrayList<Token> replacement = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.Identifier, "b")
+        ));
+        ArrayList<Token> expectedList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.Identifier, "b"),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        ArrayList<Token> actualList = MacroProcessor.replaceAllSingleTokensWithMultipleTokens(inputList, tokenToReplace, replacement);
+        TokenizerTest.checkTokenListsEqual(actualList, expectedList);
+    }
+
+    @Test
+    public void testReplaceAllSingleTokensWithMultipleTokens_replaceWithSeveralToken() {
+        ArrayList<Token> inputList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.Identifier, "a"),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        Token tokenToReplace = new Token(TokenType.Identifier, "a");
+        ArrayList<Token> replacement = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.Identifier, "b"),
+            new Token(TokenType.Comma, ","),
+            new Token(TokenType.Identifier, "c")
+        ));
+        ArrayList<Token> expectedList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.Identifier, "b"),
+            new Token(TokenType.Comma, ","),
+            new Token(TokenType.Identifier, "c"),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        ArrayList<Token> actualList = MacroProcessor.replaceAllSingleTokensWithMultipleTokens(inputList, tokenToReplace, replacement);
+        TokenizerTest.checkTokenListsEqual(actualList, expectedList);
+    }
+
+    @Test
+    public void testReplaceAllSingleTokensWithMultipleTokens_replaceTwoTokensWithOneTokenEach() {
+        ArrayList<Token> inputList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.Identifier, "a"),
+            new Token(TokenType.Comma, ","),
+            new Token(TokenType.Identifier, "a"),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        Token tokenToReplace = new Token(TokenType.Identifier, "a");
+        ArrayList<Token> replacement = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.Identifier, "b")
+        ));
+        ArrayList<Token> expectedList = new ArrayList<Token>(Arrays.asList(
+            new Token(TokenType.OpeningRoundBracket, "("),
+            new Token(TokenType.Identifier, "b"),
+            new Token(TokenType.Comma, ","),
+            new Token(TokenType.Identifier, "b"),
+            new Token(TokenType.ClosingRoundBracket, ")")
+        ));
+        ArrayList<Token> actualList = MacroProcessor.replaceAllSingleTokensWithMultipleTokens(inputList, tokenToReplace, replacement);
+        TokenizerTest.checkTokenListsEqual(actualList, expectedList);
+    }
+
+    @Test
     public void testDefineAndUseMacroWithBracketsWithoutArguemnts() {
         try {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
