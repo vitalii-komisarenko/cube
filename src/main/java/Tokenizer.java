@@ -477,7 +477,6 @@ public class Tokenizer {
     String readTypePartOfNumber() throws TokenizerException {
         /** Read type part of number such as u, l, ull, f etc. */
         String type = readAlphaNumUnderscoreSequence();
-        System.out.println("type ===== " + type);
         if (type.equals(""))
             return type;
         if (type.toLowerCase().equals("u"))
