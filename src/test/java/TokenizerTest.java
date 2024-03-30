@@ -34,12 +34,27 @@ public class TokenizerTest {
         }
     }
 
+    static public void printTokenList(ArrayList<Token> token_list) {
+        System.out.println("\t<" + token_list.size() + " item(s)>");
+        for (Token token : token_list) {
+            System.out.println("\t" + token);
+        }
+    }
+
     static public void checkTokenListsEqual(ArrayList<Token> first, ArrayList<Token> second) {
         if (first.size() != second.size()) {
+            System.out.println("First list: ");
+            printTokenList(first);
+            System.out.println("Second list: ");
+            printTokenList(second);
             fail("Token lists have different size");
         }
         for (int i = 0; i < first.size(); ++i) {
             if (!first.get(i).equals(second.get(i))) {
+                System.out.println("First list: ");
+                printTokenList(first);
+                System.out.println("Second list: ");
+                printTokenList(second);
                 fail("Tokens differ");
             }
         }
