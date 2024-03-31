@@ -62,6 +62,16 @@ public class MacroProcessor {
         }
 
         String macro_type = tokens.get(parser_pos).value;
+
+        if (macro_type == "#undef") {
+            // actual treating of #undef is treated in #define
+            tokens.remove(parser_pos); // #undef
+            tokens.remove(parser_pos); // macro_name
+            if (parser_pos < tokens.size())
+                tokens.remove(parser_pos); // \n
+            return;
+        }
+
         int macro_beginning_index = parser_pos;
 
         parser_pos++;
@@ -135,9 +145,15 @@ public class MacroProcessor {
         for (int i = 0; (i < starting_pos) && (i < tokens.size()); ++i) {
             new_tokens.add(tokens.get(i));
         }
+        boolean undef_encountered = false;
         for (int i = starting_pos; i < tokens.size(); ++i) {
             Token token = tokens.get(i);
-            if (token.equals(new Token(TokenType.Identifier, macro_name))) {
+            if ((i < tokens.size() - 1) && token.equals(new Token(TokenType.MacroIdentifier, "#undef")) && tokens.get(i+1).equals(new Token(TokenType.Identifier, macro_name))) {
+                undef_encountered = true;
+                i += 2;
+                continue;
+            }
+            if (!undef_encountered && token.equals(new Token(TokenType.Identifier, macro_name))) {
                 new_tokens.addAll(macro_replacement);
             }
             else {
@@ -212,6 +228,15 @@ public class MacroProcessor {
                                   int starting_pos) throws MacroProcessorException {
         for (parser_pos = starting_pos; parser_pos < tokens.size(); ++parser_pos) {
             Token token = tokens.get(parser_pos);
+
+            if ((parser_pos < tokens.size() - 1) && token.equals(new Token(TokenType.MacroIdentifier, "#undef")) && tokens.get(parser_pos+1).equals(new Token(TokenType.Identifier, macro_name))) {
+                tokens.remove(parser_pos); // #undef
+                tokens.remove(parser_pos); // macro_name
+                if (parser_pos < tokens.size())
+                    tokens.remove(parser_pos); // \n
+                break;
+            }
+
             if ((token.type != TokenType.Identifier) || (!token.value.equals(macro_name))) {
                 continue;
             }
