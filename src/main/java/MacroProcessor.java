@@ -8,6 +8,7 @@ import cube.Tokenizer.TokenizerException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MacroProcessor {
@@ -73,12 +74,12 @@ public class MacroProcessor {
 
         parser_pos++;
 
-        ArrayList<Token> raw_macro_paramaters = new ArrayList<Token>(); // including opening and closing brackets
+        ArrayList<Token> raw_macro_parameters = new ArrayList<Token>(); // including opening and closing brackets
         if ((parser_pos < tokens.size()) && (tokens.get(parser_pos).type == TokenType.OpeningRoundBracket)) {
             for (; parser_pos < tokens.size(); ++parser_pos) {
                 assertParserNotOutOfBounds();
                 Token token = tokens.get(parser_pos);
-                raw_macro_paramaters.add(token);
+                raw_macro_parameters.add(token);
                 if (token.type == TokenType.ClosingRoundBracket) {
                     break;
                 }
@@ -105,13 +106,13 @@ public class MacroProcessor {
         parser_pos = macro_beginning_index;
 
         if (macro_type == "#define") {
-            if (raw_macro_paramaters.size() == 0) {
+            if (raw_macro_parameters.size() == 0) {
                 processMacroWithoutBrackets(macro_name, macro_replacement, macro_beginning_index);
             }
             else {
                 ArrayList<Token> macro_parameters = new ArrayList<Token>();
-                for (int i = 1; i < raw_macro_paramaters.size() - 1; ++i) {
-                    Token token = raw_macro_paramaters.get(i);
+                for (int i = 1; i < raw_macro_parameters.size() - 1; ++i) {
+                    Token token = raw_macro_parameters.get(i);
                     if (i % 2 == 0) {
                         if (token.type != TokenType.Comma) {
                             throw new MacroProcessorException();
@@ -180,8 +181,33 @@ public class MacroProcessor {
         return outputList;
     }
 
+    void replaceMacroAtPosition(int starting_pos,
+                                int ending_pos,
+                                ArrayList<Token> macroPattern,
+                                HashMap<Token, ArrayList<Token>> parametersMapping) {
+        List<Token> before = tokens.subList(0, starting_pos);
+        List<Token> after = tokens.subList(ending_pos, tokens.size());
+
+        ArrayList<Token> after_replacement = new ArrayList<Token>();
+        for (Token token : macroPattern) {
+            ArrayList<Token> value = parametersMapping.get(token);
+            if (value == null) {
+                after_replacement.add(token);
+            }
+            else {
+                after_replacement.addAll(value);
+            }
+        }
+
+        tokens = new ArrayList<Token>();
+        tokens.addAll(before);
+        tokens.addAll(after_replacement);
+        parser_pos = tokens.size();
+        tokens.addAll(after);
+    }
+
     void processMacroWithBrackets(String macro_name,
-                                  ArrayList<Token> macro_paramaters,
+                                  ArrayList<Token> macro_parameters,
                                   ArrayList<Token> macro_replacement,
                                   int starting_pos) throws MacroProcessorException {
         ArrayList<Token> new_tokens = new ArrayList<Token>();
@@ -196,6 +222,7 @@ public class MacroProcessor {
             }
 
             int macro_replacement_start = parser_pos;
+            int macro_replacement_size = macro_replacement.size();
             parser_pos++; // skip macro name
 
             // check the opening bracket
@@ -203,22 +230,22 @@ public class MacroProcessor {
                 throw new MacroProcessorException();
             }
 
-            ArrayList<ArrayList<Token>> caller_macro_params = new ArrayList<ArrayList<Token>>();
+            HashMap<Token, ArrayList<Token>> caller_macro_params = new HashMap<Token, ArrayList<Token>>();
 
-            for (int i = 0; i < macro_paramaters.size() - 2; ++i) {
-                caller_macro_params.add(readMacroParameter());
-                if ((i != macro_paramaters.size() - 1) && (tokens.get(parser_pos++ + 1).type != TokenType.Comma)) {
-                    throw new MacroProcessorException();
-                }
+            for (int i = 0; i < macro_parameters.size(); ++i) {
+                Token token_to_replace = macro_parameters.get(i);
+                ArrayList<Token> replacement = readMacroParameter();
+                caller_macro_params.put(token_to_replace, replacement);
+
+                parser_pos++; // skip comma or closing bracket
             }
 
-            // check the closing bracket
-            if (tokens.get(parser_pos + macro_paramaters.size() - 2).type != TokenType.OpeningRoundBracket) {
-                throw new MacroProcessorException();
+            if (macro_parameters.size() == 0) {
+                parser_pos++; // closing bracket
             }
+
+            replaceMacroAtPosition(macro_replacement_start, parser_pos, macro_replacement, caller_macro_params);
         }
-
-        tokens = new_tokens;
     }
 
     private int parser_pos;

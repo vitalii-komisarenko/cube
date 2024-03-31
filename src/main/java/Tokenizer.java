@@ -1,6 +1,7 @@
 package cube;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class Tokenizer {
@@ -68,6 +69,11 @@ public class Tokenizer {
             }
             Token other = (Token) object;
             return this.type.equals(other.type) && this.value.equals(other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type, value);
         }
 
         @Override

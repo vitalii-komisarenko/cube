@@ -423,6 +423,8 @@ public class MacroProcessorTest {
                 new Token(TokenType.OpeningCurlyBracket, "{"),
                 new Token(TokenType.Identifier, "printf"),
                 new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.String, "%s"),
+                new Token(TokenType.Comma, ","),
                 new Token(TokenType.String, "Hello, World!"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Semicolon, ";"),
