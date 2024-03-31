@@ -439,6 +439,116 @@ public class MacroProcessorTest {
     }
 
     @Test
+    public void testDefineMacroWithBracketsWithoutArguemntsAndUseTwice() {
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "1"),
+                new Token(TokenType.Plus, "+"),
+                new Token(TokenType.Integer, "2"),
+                new Token(TokenType.Semicolon, ";"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Integer, "1"),
+                new Token(TokenType.Plus, "+"),
+                new Token(TokenType.Integer, "2"),
+                new Token(TokenType.Semicolon, ";"),
+                new Token(TokenType.Integer, "1"),
+                new Token(TokenType.Plus, "+"),
+                new Token(TokenType.Integer, "2"),
+                new Token(TokenType.Semicolon, ";")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testDefineMacroWithBracketsWithOneArguemntsAndUseTwice() {
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.Semicolon, ";"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.Semicolon, ";"),
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.Semicolon, ";")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testDefineMacroWithBracketsWithOneArguemntsAndUseTwice2() {
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.Plus, "+"),
+                new Token(TokenType.Integer, "2"),
+                new Token(TokenType.Semicolon, ";"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "macro_name"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.Plus, "+"),
+                new Token(TokenType.Integer, "2"),
+                new Token(TokenType.Semicolon, ";"),
+                new Token(TokenType.Identifier, "param"),
+                new Token(TokenType.Plus, "+"),
+                new Token(TokenType.Integer, "2"),
+                new Token(TokenType.Semicolon, ";")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
     public void testOneDefineWithoutBracketsCalledFromTwoPlaces() {
         try {
             ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
