@@ -574,4 +574,38 @@ public class MacroProcessorTest {
             fail("MacroProcessorException");
         }
     }
+
+    @Test
+    public void testMacroWithParameterCalledAsMacro() {
+        /*
+        Input:
+            #define macro(macro) macro
+            macro(macro)
+        Output:
+            macro
+        */
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "macro"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "macro"),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "macro"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "macro"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "macro"),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Identifier, "macro")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
 }
