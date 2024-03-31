@@ -210,12 +210,7 @@ public class MacroProcessor {
                                   ArrayList<Token> macro_parameters,
                                   ArrayList<Token> macro_replacement,
                                   int starting_pos) throws MacroProcessorException {
-        ArrayList<Token> new_tokens = new ArrayList<Token>();
-        for (int parser_pos = 0; (parser_pos < starting_pos) && (parser_pos < tokens.size()); ++parser_pos) {
-            new_tokens.add(tokens.get(parser_pos));
-        }
-
-        for (; parser_pos + macro_replacement.size() < tokens.size(); ++parser_pos) {
+        for (parser_pos = starting_pos; parser_pos < tokens.size(); ++parser_pos) {
             Token token = tokens.get(parser_pos);
             if ((token.type != TokenType.Identifier) || (!token.value.equals(macro_name))) {
                 continue;
@@ -245,6 +240,8 @@ public class MacroProcessor {
             }
 
             replaceMacroAtPosition(macro_replacement_start, parser_pos, macro_replacement, caller_macro_params);
+
+            parser_pos--;
         }
     }
 

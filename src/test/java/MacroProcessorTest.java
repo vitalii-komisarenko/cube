@@ -490,9 +490,11 @@ public class MacroProcessorTest {
                 new Token(TokenType.NewLine, "\n"),
                 new Token(TokenType.Identifier, "macro_name"),
                 new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "param"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Identifier, "macro_name"),
                 new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "param"),
                 new Token(TokenType.ClosingRoundBracket, ")")
             ));
             ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
@@ -525,9 +527,11 @@ public class MacroProcessorTest {
                 new Token(TokenType.NewLine, "\n"),
                 new Token(TokenType.Identifier, "macro_name"),
                 new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "param"),
                 new Token(TokenType.ClosingRoundBracket, ")"),
                 new Token(TokenType.Identifier, "macro_name"),
                 new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "param"),
                 new Token(TokenType.ClosingRoundBracket, ")")
             ));
             ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
