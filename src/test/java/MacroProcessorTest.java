@@ -762,4 +762,104 @@ public class MacroProcessorTest {
             fail("MacroProcessorException");
         }
     }
+
+    @Test
+    public void testStringification() {
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "STR"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "x"),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Octothorp, "#"),
+                new Token(TokenType.Identifier, "x"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "STR"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "y"),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.String, "y")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testConcatenationTwoTokens() {
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "CONCAT"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "x"),
+                new Token(TokenType.Comma, ","),
+                new Token(TokenType.Identifier, "y"),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "y"),
+                new Token(TokenType.DoubleOctothorp, "##"),
+                new Token(TokenType.Identifier, "x"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "CONCAT"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Comma, ","),
+                new Token(TokenType.Identifier, "b"),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Identifier, "ba")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testConcatenationThreeTokens() {
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "CONCAT"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "x"),
+                new Token(TokenType.Comma, ","),
+                new Token(TokenType.Identifier, "y"),
+                new Token(TokenType.Comma, ","),
+                new Token(TokenType.Identifier, "z"),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Identifier, "x"),
+                new Token(TokenType.DoubleOctothorp, "##"),
+                new Token(TokenType.Identifier, "y"),
+                new Token(TokenType.DoubleOctothorp, "##"),
+                new Token(TokenType.Identifier, "z"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "CONCAT"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Comma, ","),
+                new Token(TokenType.Identifier, "b"),
+                new Token(TokenType.Comma, ","),
+                new Token(TokenType.Identifier, "c"),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Identifier, "abc")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
 }

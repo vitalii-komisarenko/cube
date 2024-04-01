@@ -48,6 +48,9 @@ public class MacroProcessor {
         }
         catch (AllMacrosProcessed e) {
         }
+
+        processStringification();
+        processTokenConcatenation();
     }
 
     void processOneMacro() throws MacroProcessorException, AllMacrosProcessed {
@@ -267,6 +270,28 @@ public class MacroProcessor {
             replaceMacroAtPosition(macro_replacement_start, parser_pos, macro_replacement, caller_macro_params);
 
             parser_pos--;
+        }
+    }
+
+    void processStringification() {
+        for (int i = 0; i < tokens.size() - 1; ++i) {
+            if (tokens.get(i).type == TokenType.Octothorp) {
+                tokens.get(i).type = TokenType.String;
+                tokens.get(i).value = tokens.get(i+1).value;
+                tokens.remove(i+1);
+            }
+        }
+    }
+
+    void processTokenConcatenation() {
+        for (int i = 1; i < tokens.size() - 1; ++i) {
+            if (tokens.get(i).type == TokenType.DoubleOctothorp) {
+                tokens.get(i).type = TokenType.Identifier;
+                tokens.get(i).value = tokens.get(i-1).value + tokens.get(i+1).value;
+                tokens.remove(i+1);
+                tokens.remove(i-1);
+                i--;
+            }
         }
     }
 
