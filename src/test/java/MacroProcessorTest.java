@@ -862,4 +862,261 @@ public class MacroProcessorTest {
             fail("MacroProcessorException");
         }
     }
+
+    @Test
+    public void testDefineUndefDefineNoBrackets() {
+        /*
+        Input:
+            #define a 3
+            a
+            #undef a
+            #define a 4
+            a
+        Output:
+            3
+            4
+        */
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.MacroIdentifier, "#undef"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Integer, "4"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.Integer, "4")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testDefineUndefUseDefineNoBrackets() {
+        /*
+        Input:
+            #define a 3
+            a
+            #undef a
+            a
+            #define a 4
+            a
+        Output:
+            3
+            a
+            4
+        */
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.MacroIdentifier, "#undef"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Integer, "4"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Integer, "4")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testDefineUndefUseDefineBracketsNoParameters() {
+        /*
+        Input:
+            #define a() 3
+            a()
+            #undef a
+            a()
+            #define a() 4
+            a()
+        Output:
+            3
+            a()
+            4
+        */
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.MacroIdentifier, "#undef"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "4"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "4")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testDefineMacroWithBracketsUndefDefineWithoutBrackets() {
+        /*
+        Input:
+            #define a() 3
+            a()
+            #undef a
+            a()
+            #define a b
+            a()
+        Output:
+            3
+            a()
+            b()
+        */
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.MacroIdentifier, "#undef"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Integer, "b"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "b"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
+
+    @Test
+    public void testDefineMacroWithoutBracketsUndefDefineWithBrackets() {
+        /*
+        Input:
+            #define a x
+            a()
+            #undef a
+            a()
+            #define a() y
+            a()
+        Output:
+            x()
+            a()
+            y
+        */
+        try {
+            ArrayList<Token> input_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.MacroIdentifier, "#undef"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.MacroIdentifier, "#define"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.Integer, "b"),
+                new Token(TokenType.NewLine, "\n"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> expected_tokens = new ArrayList<Token>(Arrays.asList(
+                new Token(TokenType.Integer, "3"),
+                new Token(TokenType.Identifier, "a"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")"),
+                new Token(TokenType.Integer, "b"),
+                new Token(TokenType.OpeningRoundBracket, "("),
+                new Token(TokenType.ClosingRoundBracket, ")")
+            ));
+            ArrayList<Token> output_tokens = new MacroProcessor(input_tokens).tokens;
+            TokenizerTest.checkTokenListsEqual(expected_tokens, output_tokens);
+        }
+        catch (MacroProcessorException e) {
+            fail("MacroProcessorException");
+        }
+    }
 }
