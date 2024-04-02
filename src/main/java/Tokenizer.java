@@ -161,6 +161,17 @@ public class Tokenizer {
                 continue;
             }
 
+            if ((parser_pos < sourceCode.length() - 1) && (sourceCode.charAt(parser_pos) == '/')) {
+                if (sourceCode.charAt(parser_pos + 1) == '*') {
+                    skipMultiLineComment();
+                    continue;
+                }
+                if (sourceCode.charAt(parser_pos + 1) == '/') {
+                    skipSingleLineComment();
+                    continue;
+                }
+            }
+
             if (tokenizeIfPrefix("++", TokenType.Increment))
                 continue;
 
@@ -478,6 +489,25 @@ public class Tokenizer {
         res += exponent;
 
         return res;
+    }
+
+    void skipSingleLineComment() {
+        for ( ; parser_pos < sourceCode.length(); ++parser_pos) {
+            if (sourceCode.charAt(parser_pos) == '\n') {
+                ++parser_pos;
+                return;
+            }
+        }
+    }
+
+    void skipMultiLineComment() {
+        parser_pos += 2; // skip /* (comment opening marker)
+        for ( ; parser_pos - 1 < sourceCode.length(); ++parser_pos) {
+            if ((sourceCode.charAt(parser_pos) == '*') && (sourceCode.charAt(parser_pos + 1) == '/')) {
+                parser_pos += 2;
+                return;
+            }
+        }
     }
 
     String readTypePartOfNumber() throws TokenizerException {

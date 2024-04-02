@@ -229,4 +229,63 @@ public class TokenizerTest {
         checkParsingToSingleToken("1.3f", TokenType.Float, "1.3f");
         checkParsingToSingleToken("1.3e+3f", TokenType.Float, "1.3e+3f");
     }
+
+    @Test
+    public void testComments() {
+        try {
+            checkTokenListsEqual(new Tokenizer("//").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            checkTokenListsEqual(new Tokenizer("/**/").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            checkTokenListsEqual(new Tokenizer("// some text").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            checkTokenListsEqual(new Tokenizer("/* some text */").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            checkTokenListsEqual(new Tokenizer("//\n").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            checkTokenListsEqual(new Tokenizer("// some text\n").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            checkTokenListsEqual(new Tokenizer("/* some\ntext */").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+
+        try {
+            checkTokenListsEqual(new Tokenizer("/*/ some\ntext */").tokens, new ArrayList<Token>());
+        }
+        catch (TokenizerException e) {
+            fail("TokenizerException");
+        }
+    }
 }
