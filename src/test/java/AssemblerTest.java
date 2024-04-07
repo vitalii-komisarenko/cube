@@ -49,4 +49,16 @@ public class AssemblerTest {
             fail("AssemblerException: " + e.getMessage());
         }
     }
+
+    @Test
+    public void testRet() {
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("ret", new ArrayList<String>());
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0xc3));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+    }
 }

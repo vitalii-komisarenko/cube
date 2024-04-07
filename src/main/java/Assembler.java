@@ -65,6 +65,11 @@ public class Assembler {
             return res;
         }
 
+        if (mnemonic.equals("ret")) {
+            res.add((byte) 0xc3);
+            return res;
+        }
+
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 }
