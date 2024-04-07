@@ -1,8 +1,20 @@
 import java.util.HashMap;
 
 public class Assembler {
-    public Assembler(String sourceCode) {
-        HashMap<String, int> registerNumbers = new HashMap<String, int>();
+    public class AssemblerException extends Exception {
+        public AssemblerException(String description) {
+            super(description);
+        }
+    }
+
+    public class UnknownAssemblerCommandException extends AssemblerException {
+        public UnknownAssemblerCommandException(String line) {
+            super("Can't parse line: " + line);
+        }
+    }
+
+    public Assembler(String sourceCode) throws UnknownAssemblerCommandException {
+        HashMap<String, Integer> registerNumbers = new HashMap<String, Integer>();
         registerNumbers.put("rax", 0);
         registerNumbers.put("rcx", 1);
         registerNumbers.put("rdx", 2);
@@ -20,6 +32,25 @@ public class Assembler {
         registerNumbers.put("r14", 14);
         registerNumbers.put("r15", 15);
 
-        String lines[] = sourceCode.replaceAll("\\R", "");
+        String lines[] = sourceCode.split("\\R");
+
+        for (String line : lines) {
+            line = line.replaceAll(",", " ");
+            line = line.replaceAll("^\\s+", "");
+            line = line.replaceAll("\\s+$", "");
+            line = line.replaceAll("\\s+", " ");
+
+            if (line.length() == 0) {
+                continue;
+            }
+
+            if (line.charAt(0) == '.') {
+                throw new UnknownAssemblerCommandException(line);
+            }
+
+            String commandParts[] = line.split(" ");
+
+            throw new UnknownAssemblerCommandException(line);
+        }
     }
 }

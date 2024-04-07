@@ -16,7 +16,7 @@ public class GenericInt64 {
         return "movq $" + String.valueOf(value) + ", " + location();
     }
 
-    void moveToRegister(String targetRegisterName) {
+    String moveToRegister(String targetRegisterName) {
         return "movq " + location() + ", " + targetRegisterName;
     }
 }
