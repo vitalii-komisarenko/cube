@@ -1,13 +1,16 @@
+package cube;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Assembler {
-    public class AssemblerException extends Exception {
+    public static class AssemblerException extends Exception {
         public AssemblerException(String description) {
             super(description);
         }
     }
 
-    public class UnknownAssemblerCommandException extends AssemblerException {
+    public static class UnknownAssemblerCommandException extends AssemblerException {
         public UnknownAssemblerCommandException(String line) {
             super("Can't parse line: " + line);
         }
@@ -52,5 +55,16 @@ public class Assembler {
 
             throw new UnknownAssemblerCommandException(line);
         }
+    }
+
+    public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params) throws UnknownAssemblerCommandException {
+        ArrayList<Byte> res = new ArrayList<Byte>();
+
+        if (mnemonic.equals("nop")) {
+            res.add((byte) 0x90);
+            return res;
+        }
+
+        throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 }
