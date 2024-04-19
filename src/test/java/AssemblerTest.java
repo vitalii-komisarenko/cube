@@ -61,4 +61,16 @@ public class AssemblerTest {
             fail("AssemblerException: " + e.getMessage());
         }
     }
+
+    @Test
+    public void testSyscall() {
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("syscall", new ArrayList<String>());
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x0f, (byte)0x05));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+    }
 }

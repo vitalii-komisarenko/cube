@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Assembler {
-    public class ModrmBasedInstruction {
+    public static class ModrmBasedInstruction {
         public enum Width {
             _8_BITS,
             _16_BITS,
@@ -14,12 +14,12 @@ public class Assembler {
         }
 
         public static ModrmBasedInstruction fromRegisterAndImmediate(String register, int immediate) {
-            ModrmBasedInstruction res();
+            ModrmBasedInstruction res = new ModrmBasedInstruction();
             return res;
         }
 
         public static ModrmBasedInstruction fromRegisterDisplacementAndImmediate(String register, int displacement, int immediate) {
-            ModrmBasedInstruction res();
+            ModrmBasedInstruction res = new ModrmBasedInstruction();
             return res;
         }
 
