@@ -4,6 +4,35 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Assembler {
+    public class ModrmBasedInstruction {
+        public enum Width {
+            _8_BITS,
+            _16_BITS,
+            _32_BITS,
+            _64_BITS_REG_32_BITS_MEM,
+            _64_BITS,
+        }
+
+        public static ModrmBasedInstruction fromRegisterAndImmediate(String register, int immediate) {
+            ModrmBasedInstruction res();
+            return res;
+        }
+
+        public static ModrmBasedInstruction fromRegisterDisplacementAndImmediate(String register, int displacement, int immediate) {
+            ModrmBasedInstruction res();
+            return res;
+        }
+
+        ArrayList<Byte> encode() {
+            ArrayList<Byte> res = new ArrayList<Byte>();
+            return res;
+        }
+
+        public int mode;
+        public int reg;
+        public int register_or_mode;
+    }
+
     public static class AssemblerException extends Exception {
         public AssemblerException(String description) {
             super(description);
@@ -68,6 +97,9 @@ public class Assembler {
         if (mnemonic.equals("ret")) {
             res.add((byte) 0xc3);
             return res;
+        }
+
+        if (mnemonic.equals("movq")) {
         }
 
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
