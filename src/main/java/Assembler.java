@@ -99,6 +99,12 @@ public class Assembler {
             return res;
         }
 
+        if (mnemonic.equals("syscall")) {
+            res.add((byte) 0x0f);
+            res.add((byte) 0x05);
+            return res;
+        }
+
         if (mnemonic.equals("movq")) {
         }
 
