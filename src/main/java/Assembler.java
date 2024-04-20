@@ -25,8 +25,17 @@ public class Assembler {
 
         ArrayList<Byte> encode() {
             ArrayList<Byte> res = new ArrayList<Byte>();
+            int rex = (1 << 6) + (rex_w ? (1 << 3) : 0) + (rex_r ? ( 1 << 2) : 0) + (rex_x ? (1 << 1) : 0) + (rex_b ? 1 : 0);
+            if (rex != (1 << 6)) {
+                res.add((byte)rex);
+            }
             return res;
         }
+
+        boolean rex_w = false;
+        boolean rex_r = false;
+        boolean rex_x = false;
+        boolean rex_b = false;
 
         public int mode;
         public int reg;
