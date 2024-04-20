@@ -102,6 +102,24 @@ public class AssemblerTest {
         catch (AssemblerException e) {
             fail("AssemblerException: " + e.getMessage());
         }
+
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("and", new ArrayList<>(Arrays.asList("$0x40", "%esi")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x83, (byte)0xe6, (byte)0x40));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("or", new ArrayList<>(Arrays.asList("$0x20", "%eax")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x83, (byte)0xc8, (byte)0x20));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
     }
 
     @Test
