@@ -46,24 +46,6 @@ public class Assembler {
     }
 
     public Assembler(String sourceCode) throws UnknownAssemblerCommandException {
-        HashMap<String, Integer> registerNumbers = new HashMap<String, Integer>();
-        registerNumbers.put("rax", 0);
-        registerNumbers.put("rcx", 1);
-        registerNumbers.put("rdx", 2);
-        registerNumbers.put("rbx", 3);
-        registerNumbers.put("rsp", 4);
-        registerNumbers.put("rbp", 5);
-        registerNumbers.put("rsi", 6);
-        registerNumbers.put("rdi", 7);
-        registerNumbers.put("r8", 8);
-        registerNumbers.put("r9", 9);
-        registerNumbers.put("r10", 10);
-        registerNumbers.put("r11", 11);
-        registerNumbers.put("r12", 12);
-        registerNumbers.put("r13", 13);
-        registerNumbers.put("r14", 14);
-        registerNumbers.put("r15", 15);
-
         String lines[] = sourceCode.split("\\R");
 
         for (String line : lines) {
@@ -108,6 +90,53 @@ public class Assembler {
         if (mnemonic.equals("movq")) {
         }
 
+        if (arithmeticOperationsCodes.containsKey(mnemonic)) {
+            int operationIndex = arithmeticOperationsCodes.get(mnemonic);
+            if (params.get(0).charAt(0) == '$') {
+                int immediate = Integer.decode(params.get(0).substring(1, params.get(0).length()));
+                if ((-128 <= immediate) && (immediate <= 127)) {
+                    if (params.get(1).startsWith("%r")) { // 64-bit register
+                        int registerIndex = registerIndexes.get(params.get(1).substring(1, params.get(1).length()));
+                        res.add((byte) (0x48 + (registerIndex > 7 ? 4 : 0)));
+                        res.add((byte) 0x83);
+                        res.add((byte) (0xc4 + (operationIndex << 3)));
+                        res.add((byte) immediate);
+                        return res;
+                    }
+                }
+            }
+        }
+
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
+
+    static HashMap<String, Integer> registerIndexes = new HashMap<String, Integer>() {{
+        put("rax", 0);
+        put("rcx", 1);
+        put("rdx", 2);
+        put("rbx", 3);
+        put("rsp", 4);
+        put("rbp", 5);
+        put("rsi", 6);
+        put("rdi", 7);
+        put("r8", 8);
+        put("r9", 9);
+        put("r10", 10);
+        put("r11", 11);
+        put("r12", 12);
+        put("r13", 13);
+        put("r14", 14);
+        put("r15", 15);
+    }};
+
+    static HashMap<String, Integer> arithmeticOperationsCodes = new HashMap<String, Integer>() {{
+        put("add", 0);
+        put("or", 1);
+        put("adc", 2);
+        put("sbb", 3);
+        put("and", 4);
+        put("sub", 5);
+        put("xor", 6);
+        put("cmp", 7);
+    }};
 }

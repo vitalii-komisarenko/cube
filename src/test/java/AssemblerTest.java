@@ -73,4 +73,25 @@ public class AssemblerTest {
             fail("AssemblerException: " + e.getMessage());
         }
     }
+
+    @Test
+    public void testArithmeticWithByteImmediate() {
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("add", new ArrayList<>(Arrays.asList("$0x8", "%rsp")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x83, (byte)0xc4, (byte)0x08));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("sub", new ArrayList<>(Arrays.asList("$0x8", "%rsp")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x83, (byte)0xec, (byte)0x08));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+    }
 }
