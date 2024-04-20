@@ -93,6 +93,10 @@ public class Assembler {
             setImmediate(_immediate, 1);
         }
 
+        void setImmediate32Bit(int _immediate) {
+            setImmediate(_immediate, 4);
+        }
+
         boolean rex_w = false;
         boolean rex_r = false;
         boolean rex_x = false;
@@ -185,6 +189,19 @@ public class Assembler {
                 instr.setMod(3);
                 instr.setRegister(params.get(0));
                 instr.setSecondRegister(params.get(1));
+                return instr.encode();
+            }
+        }
+
+        if (mnemonic.equals("imul")) {
+            if (params.get(0).startsWith("$") && params.get(1).startsWith("%") && params.get(2).startsWith("%")) {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                int immediate = Integer.decode(params.get(0).substring(1, params.get(0).length()));
+                instr.setOpcode(0x69);
+                instr.setMod(3);
+                instr.setRegister(params.get(1));
+                instr.setSecondRegister(params.get(2));
+                instr.setImmediate32Bit(immediate);
                 return instr.encode();
             }
         }

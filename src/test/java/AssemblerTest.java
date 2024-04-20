@@ -142,4 +142,17 @@ public class AssemblerTest {
             fail("AssemblerException: " + e.getMessage());
         }
     }
+
+    @Test
+    public void testImul() {
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("imul", new ArrayList<>(Arrays.asList("$0xf4240", "%rdx", "%rdx")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x69, (byte)0xd2, (byte)0x40,
+                                                                         (byte)0x42, (byte)0x0f, (byte)0x00));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+    }
 }
