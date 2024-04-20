@@ -86,6 +86,15 @@ public class AssemblerTest {
         }
 
         try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("adc", new ArrayList<>(Arrays.asList("$0x0", "%rbp")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x83, (byte)0xd5, (byte)0x00));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+
+        try {
             ArrayList<Byte> actual = Assembler.encodeCommand("sub", new ArrayList<>(Arrays.asList("$0x8", "%rsp")));
             ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x83, (byte)0xec, (byte)0x08));
             assertByteArraysAreEqual(actual, expected);

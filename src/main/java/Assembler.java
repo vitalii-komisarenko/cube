@@ -42,6 +42,9 @@ public class Assembler {
             int modrm = (modrm_mod << 6) | (modrm_reg << 3) | (modrm_rm);
             res.add((byte)modrm);
 
+            // Immediate
+            res.addAll(immediate);
+
             return res;
         }
 
@@ -71,11 +74,23 @@ public class Assembler {
         }
 
         public void setSecondRegister(String register) {
+            register = stringRemovePrefix(register, "%");
+            rex_w = register.startsWith("r");
+
             int registerIndex = getRegisterIndex(register);
-            if (registerIndex > 7) {
-                rex_b = true;
-            }
+            rex_b = registerIndex > 7;
+
             modrm_rm = registerIndex & 0x7;
+        }
+
+        void setImmediate(int _immediate, int numberOfBytes) {
+            for (int i = 0; i < numberOfBytes; ++i) {
+                immediate.add((byte)((_immediate >> (8 * i)) & 0xFF));
+            }
+        }
+
+        void setImmediate8Bit(int _immediate) {
+            setImmediate(_immediate, 1);
         }
 
         boolean rex_w = false;
@@ -88,6 +103,8 @@ public class Assembler {
         int modrm_mod;
         int modrm_reg;
         int modrm_rm;
+
+        ArrayList<Byte> immediate = new ArrayList<Byte>();
     }
 
     public static class AssemblerException extends Exception {
@@ -152,14 +169,13 @@ public class Assembler {
             if (params.get(0).charAt(0) == '$') {
                 int immediate = Integer.decode(params.get(0).substring(1, params.get(0).length()));
                 if ((-128 <= immediate) && (immediate <= 127)) {
-                    if (params.get(1).startsWith("%r")) { // 64-bit register
-                        int registerIndex = getRegisterIndex(params.get(1));
-                        res.add((byte) (0x48 + (registerIndex > 7 ? 4 : 0)));
-                        res.add((byte) 0x83);
-                        res.add((byte) (0xc4 + (operationIndex << 3)));
-                        res.add((byte) immediate);
-                        return res;
-                    }
+                    ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                    instr.setOpcode(0x83);
+                    instr.setMod(3);
+                    instr.setOpcodeExtension(operationIndex);
+                    instr.setSecondRegister(params.get(1));
+                    instr.setImmediate8Bit(immediate);
+                    return instr.encode();
                 }
             }
 
