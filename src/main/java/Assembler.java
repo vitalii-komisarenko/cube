@@ -49,6 +49,10 @@ public class Assembler {
             opcode = _opcode;
         }
 
+        public void setMod(int mod) {
+            modrm_mod = mod;
+        }
+
         public void setRegister(int registerIndex) {
             rex_r = registerIndex > 7;
             modrm_reg = registerIndex & 0x7;
@@ -158,6 +162,15 @@ public class Assembler {
                     }
                 }
             }
+
+            if (looksLikeRegister(params.get(0)) && looksLikeRegister(params.get(1))) {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(operationIndex * 8 + 1);
+                instr.setMod(3);
+                instr.setRegister(params.get(0));
+                instr.setSecondRegister(params.get(1));
+                return instr.encode();
+            }
         }
 
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
@@ -194,6 +207,13 @@ public class Assembler {
         register = stringRemovePrefix(register, "r");
         register = stringRemovePrefix(register, "e");
         return registerIndexes.get(register);
+    }
+
+    static boolean looksLikeRegister(String register) {
+        register = stringRemovePrefix(register, "%");
+        register = stringRemovePrefix(register, "r");
+        register = stringRemovePrefix(register, "e");
+        return registerIndexes.containsKey(register);
     }
 
     static HashMap<String, Integer> arithmeticOperationsCodes = new HashMap<String, Integer>() {{

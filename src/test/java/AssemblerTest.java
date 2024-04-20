@@ -94,4 +94,25 @@ public class AssemblerTest {
             fail("AssemblerException: " + e.getMessage());
         }
     }
+
+    @Test
+    public void testXorWithItself() {
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("xor", new ArrayList<>(Arrays.asList("%eax", "%eax")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x31, (byte)0xc0));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand("xor", new ArrayList<>(Arrays.asList("%esi", "%esi")));
+            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x31, (byte)0xf6));
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+    }
 }
