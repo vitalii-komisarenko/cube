@@ -25,11 +25,53 @@ public class Assembler {
 
         ArrayList<Byte> encode() {
             ArrayList<Byte> res = new ArrayList<Byte>();
+
+            // REX prefix
             int rex = (1 << 6) + (rex_w ? (1 << 3) : 0) + (rex_r ? ( 1 << 2) : 0) + (rex_x ? (1 << 1) : 0) + (rex_b ? 1 : 0);
             if (rex != (1 << 6)) {
                 res.add((byte)rex);
             }
+
+            // OpCode
+            if (opcode > 0xFF) {
+                res.add((byte)(opcode >> 8));
+            }
+            res.add((byte)(opcode & 0xFF));
+
+            // ModR/M byte
+            int modrm = (modrm_mod << 6) | (modrm_reg << 3) | (modrm_rm);
+            res.add((byte)modrm);
+
             return res;
+        }
+
+        public void setOpcode(int _opcode) {
+            opcode = _opcode;
+        }
+
+        public void setRegister(int registerIndex) {
+            rex_r = registerIndex > 7;
+            modrm_reg = registerIndex & 0x7;
+        }
+
+        public void setRegister(String register) {
+            register = stringRemovePrefix(register, "%");
+            if (register.startsWith("r")) {
+                rex_w = true;
+            }
+            setRegister(getRegisterIndex(register));
+        }
+
+        public void setOpcodeExtension(int opcodeExtension) {
+            modrm_reg = opcodeExtension;
+        }
+
+        public void setSecondRegister(String register) {
+            int registerIndex = getRegisterIndex(register);
+            if (registerIndex > 7) {
+                rex_b = true;
+            }
+            modrm_rm = registerIndex & 0x7;
         }
 
         boolean rex_w = false;
@@ -37,9 +79,11 @@ public class Assembler {
         boolean rex_x = false;
         boolean rex_b = false;
 
-        public int mode;
-        public int reg;
-        public int register_or_mode;
+        int opcode;
+
+        int modrm_mod;
+        int modrm_reg;
+        int modrm_rm;
     }
 
     public static class AssemblerException extends Exception {
@@ -105,7 +149,7 @@ public class Assembler {
                 int immediate = Integer.decode(params.get(0).substring(1, params.get(0).length()));
                 if ((-128 <= immediate) && (immediate <= 127)) {
                     if (params.get(1).startsWith("%r")) { // 64-bit register
-                        int registerIndex = registerIndexes.get(params.get(1).substring(1, params.get(1).length()));
+                        int registerIndex = getRegisterIndex(params.get(1));
                         res.add((byte) (0x48 + (registerIndex > 7 ? 4 : 0)));
                         res.add((byte) 0x83);
                         res.add((byte) (0xc4 + (operationIndex << 3)));
@@ -120,23 +164,37 @@ public class Assembler {
     }
 
     static HashMap<String, Integer> registerIndexes = new HashMap<String, Integer>() {{
-        put("rax", 0);
-        put("rcx", 1);
-        put("rdx", 2);
-        put("rbx", 3);
-        put("rsp", 4);
-        put("rbp", 5);
-        put("rsi", 6);
-        put("rdi", 7);
-        put("r8", 8);
-        put("r9", 9);
-        put("r10", 10);
-        put("r11", 11);
-        put("r12", 12);
-        put("r13", 13);
-        put("r14", 14);
-        put("r15", 15);
+        put("ax", 0);
+        put("cx", 1);
+        put("dx", 2);
+        put("bx", 3);
+        put("sp", 4);
+        put("bp", 5);
+        put("si", 6);
+        put("di", 7);
+        put("8", 8);
+        put("9", 9);
+        put("10", 10);
+        put("11", 11);
+        put("12", 12);
+        put("13", 13);
+        put("14", 14);
+        put("15", 15);
     }};
+
+    static String stringRemovePrefix(String str, String prefix) {
+        if (str.startsWith(prefix)) {
+            return str.substring(prefix.length(), str.length());
+        }
+        return str;
+    }
+
+    static int getRegisterIndex(String register) {
+        register = stringRemovePrefix(register, "%");
+        register = stringRemovePrefix(register, "r");
+        register = stringRemovePrefix(register, "e");
+        return registerIndexes.get(register);
+    }
 
     static HashMap<String, Integer> arithmeticOperationsCodes = new HashMap<String, Integer>() {{
         put("add", 0);
