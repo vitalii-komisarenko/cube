@@ -180,4 +180,9 @@ public class AssemblerTest {
     public void testMul() {
         checkAsm("mul %r9", "49 f7 e1");
     }
+
+    @Test
+    public void testNot() {
+        checkAsm("not %edx", "f7 d2");
+    }
 }

@@ -228,6 +228,17 @@ public class Assembler {
             }
         }
 
+        if (mnemonic.equals("not")) {
+            if (params.size() == 1) {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(0xf7);
+                instr.setMod(3);
+                instr.setOpcodeExtension(2);
+                instr.setSecondRegister(params.get(0));
+                return instr.encode();
+            }
+        }
+
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 
