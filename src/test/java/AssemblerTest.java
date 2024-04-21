@@ -175,4 +175,9 @@ public class AssemblerTest {
             fail("AssemblerException: " + e.getMessage());
         }
     }
+
+    @Test
+    public void testMul() {
+        checkAsm("mul %r9", "49 f7 e1");
+    }
 }
