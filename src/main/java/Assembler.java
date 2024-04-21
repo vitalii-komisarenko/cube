@@ -27,6 +27,11 @@ public class Assembler {
         ArrayList<Byte> encode() {
             ArrayList<Byte> res = new ArrayList<Byte>();
 
+            // Operand-size override prefix
+            if (operand_size_override) {
+                res.add((byte)0x66);
+            }
+
             // REX prefix
             int rex = (1 << 6) + (rex_w ? (1 << 3) : 0) + (rex_r ? ( 1 << 2) : 0) + (rex_x ? (1 << 1) : 0) + (rex_b ? 1 : 0);
             if (rex != (1 << 6)) {
@@ -64,6 +69,9 @@ public class Assembler {
 
         public void setRegister(String register) {
             register = stringRemovePrefix(register, "%");
+            if (is16BitRegister(register)) {
+                operand_size_override = true;
+            }
             if (register.startsWith("r")) {
                 rex_w = true;
             }
@@ -76,6 +84,9 @@ public class Assembler {
 
         public void setSecondRegister(String register) {
             register = stringRemovePrefix(register, "%");
+            if (is16BitRegister(register)) {
+                operand_size_override = true;
+            }
             rex_w = register.startsWith("r");
 
             int registerIndex = getRegisterIndex(register);
@@ -102,6 +113,8 @@ public class Assembler {
         boolean rex_r = false;
         boolean rex_x = false;
         boolean rex_b = false;
+
+        boolean operand_size_override = false;
 
         int opcode;
 
@@ -272,6 +285,11 @@ public class Assembler {
         put("14", 14);
         put("15", 15);
     }};
+
+    static boolean is16BitRegister(String register) {
+        register = stringRemovePrefix(register, "%");
+        return registerIndexes.containsKey(register);
+    }
 
     static HashMap<String, Integer> rotationAndShiftIndexes = new HashMap<String, Integer>() {{
         put("rol", 0);
