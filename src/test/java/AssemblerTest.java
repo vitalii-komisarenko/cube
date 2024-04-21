@@ -143,6 +143,12 @@ public class AssemblerTest {
     }
 
     @Test
+    public void testArithmeticsWithTwoRegisters() {
+        checkAsm("sbb %eax %eax", "19 c0");
+        checkAsm("sbb %eax %ebx", "19 c3");
+    }
+
+    @Test
     public void testXorWithItself() {
         try {
             ArrayList<Byte> actual = Assembler.encodeCommand("xor", new ArrayList<>(Arrays.asList("%eax", "%eax")));
@@ -179,6 +185,12 @@ public class AssemblerTest {
     @Test
     public void testMul() {
         checkAsm("mul %r9", "49 f7 e1");
+    }
+
+    @Test
+    public void testDivision() {
+        checkAsm("div %rcx", "48 f7 f1");
+        checkAsm("idiv %ebx", "f7 fb");
     }
 
     @Test

@@ -253,6 +253,28 @@ public class Assembler {
             }
         }
 
+        if (mnemonic.equals("div")) {
+            if (params.size() == 1) {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(0xf7);
+                instr.setMod(3);
+                instr.setOpcodeExtension(6);
+                instr.setSecondRegister(params.get(0));
+                return instr.encode();
+            }
+        }
+
+        if (mnemonic.equals("idiv")) {
+            if (params.size() == 1) {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(0xf7);
+                instr.setMod(3);
+                instr.setOpcodeExtension(7);
+                instr.setSecondRegister(params.get(0));
+                return instr.encode();
+            }
+        }
+
         if (mnemonic.equals("not")) {
             if (params.size() == 1) {
                 ModrmBasedInstruction instr = new ModrmBasedInstruction();
