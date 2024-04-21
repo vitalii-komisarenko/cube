@@ -1,5 +1,6 @@
 package cube;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -144,6 +145,16 @@ public class Assembler {
 
             throw new UnknownAssemblerCommandException(line);
         }
+    }
+
+    public static ArrayList<Byte> encodeCommand(String line) throws UnknownAssemblerCommandException {
+        line = line.replaceAll(",", " ");
+        line = line.replaceAll("^\\s+", "");
+        line = line.replaceAll("\\s+$", "");
+        line = line.replaceAll("\\s+", " ");
+        String commandParts[] = line.split(" ");
+        ArrayList<String> params = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(commandParts, 1, commandParts.length)));
+        return encodeCommand(commandParts[0], params);
     }
 
     public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params) throws UnknownAssemblerCommandException {

@@ -38,6 +38,26 @@ public class AssemblerTest {
         }
     }
 
+    static ArrayList<Byte> parseStringIntoBytes(String input) {
+        // a helper function to parse strings like this: 12 34 56 78 90 ab cd ef
+        ArrayList<Byte> res = new ArrayList<>();
+        for (String byteString : input.split("\\s+")) {
+            res.add((byte)Integer.parseInt(byteString, 16));
+        }
+        return res;
+    }
+
+    static void checkAsm(String assemblerLine, String expectedOutput) {
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand(assemblerLine);
+            ArrayList<Byte> expected = parseStringIntoBytes(expectedOutput);
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+    }
+
     @Test
     public void testNop() {
         try {
