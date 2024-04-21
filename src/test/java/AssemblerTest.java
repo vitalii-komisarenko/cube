@@ -185,4 +185,9 @@ public class AssemblerTest {
     public void testNot() {
         checkAsm("not %edx", "f7 d2");
     }
+
+    @Test
+    public void testRotationsAndShifts() {
+        checkAsm("shr $0x1f %eax", "c1 e8 1f");
+    }
 }

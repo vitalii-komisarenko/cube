@@ -204,6 +204,18 @@ public class Assembler {
             }
         }
 
+        if (rotationAndShiftIndexes.containsKey(mnemonic)) {
+            if (params.get(0).charAt(0) == '$') {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(0xc1);
+                instr.setMod(3);
+                instr.setOpcodeExtension(rotationAndShiftIndexes.get(mnemonic));
+                instr.setSecondRegister(params.get(1));
+                instr.setImmediate8Bit((byte) (int) Integer.decode(params.get(0).substring(1, params.get(0).length())));
+                return instr.encode();
+            }
+        }
+
         if (mnemonic.equals("mul")) {
             if (params.size() == 1) {
                 ModrmBasedInstruction instr = new ModrmBasedInstruction();
@@ -259,6 +271,17 @@ public class Assembler {
         put("13", 13);
         put("14", 14);
         put("15", 15);
+    }};
+
+    static HashMap<String, Integer> rotationAndShiftIndexes = new HashMap<String, Integer>() {{
+        put("rol", 0);
+        put("ror", 1);
+        put("rcl", 2);
+        put("rcr", 3);
+        put("shl", 4);
+        put("shr", 5);
+        put("sal", 6);
+        put("sar", 7);
     }};
 
     static String stringRemovePrefix(String str, String prefix) {
