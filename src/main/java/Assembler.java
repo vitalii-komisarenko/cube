@@ -173,19 +173,24 @@ public class Assembler {
     public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params) throws UnknownAssemblerCommandException {
         ArrayList<Byte> res = new ArrayList<Byte>();
 
-        if (mnemonic.equals("nop")) {
-            res.add((byte) 0x90);
-            return res;
-        }
+        HashMap<String, Integer> zeroParamsCommands = new HashMap<String, Integer>() {{
+            put("nop", 0x90);
+            put("ret", 0xc3);
+            put("clc", 0xf8);
+            put("stc", 0xf9);
+            put("cli", 0xfa);
+            put("sti", 0xfb);
+            put("cld", 0xfc);
+            put("std", 0xfd);
+            put("syscall", 0x0f05);
+        }};
 
-        if (mnemonic.equals("ret")) {
-            res.add((byte) 0xc3);
-            return res;
-        }
-
-        if (mnemonic.equals("syscall")) {
-            res.add((byte) 0x0f);
-            res.add((byte) 0x05);
+        if (params.size() == 0) {
+            int opcode = zeroParamsCommands.get(mnemonic);
+            if (opcode > 0xFF) {
+                res.add((byte)(opcode >> 8));
+            }
+            res.add((byte)(opcode & 0xFF));
             return res;
         }
 
