@@ -216,4 +216,9 @@ public class AssemblerTest {
         checkAsm("pop %rbp", "5d");
         checkAsm("pop %r12", "41 5c");
     }
+
+    @Test
+    public void testXchg() {
+        checkAsm("xchg %rbx %r12", "49 87 dc");
+    }
 }

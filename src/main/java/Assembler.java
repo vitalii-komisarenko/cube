@@ -319,6 +319,19 @@ public class Assembler {
             }
         }
 
+        if (mnemonic.equals("xchg")) {
+            if (getRegisterIndex(params.get(1)) == 0) {
+            }
+            else {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(0x87);
+                instr.setMod(3);
+                instr.setRegister(params.get(0));
+                instr.setSecondRegister(params.get(1));
+                return instr.encode();
+            }
+        }
+
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 
