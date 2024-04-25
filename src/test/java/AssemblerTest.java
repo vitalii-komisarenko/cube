@@ -140,6 +140,8 @@ public class AssemblerTest {
         catch (AssemblerException e) {
             fail("AssemblerException: " + e.getMessage());
         }
+
+        checkAsm("cmp $0x1 %eax", "83 f8 01");
     }
 
     @Test
