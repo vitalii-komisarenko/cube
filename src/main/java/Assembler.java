@@ -291,6 +291,34 @@ public class Assembler {
             }
         }
 
+        if (mnemonic.equals("push")) {
+            if (params.get(0).charAt(0) == '$') {
+                res.add((byte)0x68);
+                res.addAll(encode32BitsImmediate(params.get(0)));
+                return res;
+            }
+
+            if (params.get(0).charAt(0) == '%') {
+                int registerIndex = getRegisterIndex(params.get(0));
+                if (registerIndex > 7) {
+                    res.add((byte)0x41);
+                }
+                res.add((byte)(0x50 + (registerIndex & 0x7)));
+                return res;
+            }
+        }
+
+        if (mnemonic.equals("pop")) {
+            if (params.get(0).charAt(0) == '%') {
+                int registerIndex = getRegisterIndex(params.get(0));
+                if (registerIndex > 7) {
+                    res.add((byte)0x41);
+                }
+                res.add((byte)(0x58 + (registerIndex & 0x7)));
+                return res;
+            }
+        }
+
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 
@@ -360,4 +388,16 @@ public class Assembler {
         put("xor", 6);
         put("cmp", 7);
     }};
+
+    static ArrayList<Byte> encode32BitsImmediate(int immediate) {
+        ArrayList<Byte> bytes = new ArrayList<>();
+        for (int i = 0; i < 4; ++i) {
+            bytes.add((byte)((immediate >> (8 * i)) & 0xF));
+        }
+        return bytes;
+    }
+
+    static ArrayList<Byte> encode32BitsImmediate(String immediate) {
+        return encode32BitsImmediate(Integer.decode(immediate.substring(1, immediate.length())));
+    }
 }

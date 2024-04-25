@@ -207,4 +207,13 @@ public class AssemblerTest {
         checkAsm("shr $0x1f %eax", "c1 e8 1f");
         checkAsm("sar $0x1f %esi", "c1 fe 1f");
     }
+
+    @Test
+    public void testPushPop() {
+        checkAsm("push $0x1", "68 01 00 00 00");
+        checkAsm("push %r12", "41 54");
+        checkAsm("push %rbp", "55");
+        checkAsm("pop %rbp", "5d");
+        checkAsm("pop %r12", "41 5c");
+    }
 }
