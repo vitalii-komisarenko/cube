@@ -221,4 +221,10 @@ public class AssemblerTest {
     public void testXchg() {
         checkAsm("xchg %rbx %r12", "49 87 dc");
     }
+
+    @Test
+    public void testTest() {
+        checkAsm("test %eax, %eax", "85 c0");
+        checkAsm("test %rdi %rdi", "48 85 ff");
+    }
 }

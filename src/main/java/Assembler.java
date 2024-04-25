@@ -332,6 +332,17 @@ public class Assembler {
             }
         }
 
+        if (mnemonic.equals("test")) {
+            if ((params.get(0).charAt(0) == '%') && (params.get(0).charAt(0) == '%')) {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(0x85);
+                instr.setMod(3);
+                instr.setRegister(params.get(0));
+                instr.setSecondRegister(params.get(1));
+                return instr.encode();
+            }
+        }
+
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 
