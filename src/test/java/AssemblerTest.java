@@ -203,6 +203,8 @@ public class AssemblerTest {
     @Test
     public void testRotationsAndShifts() {
         checkAsm("rol $0x8 %di", "66 c1 c7 08");
+        checkAsm("ror $0x2 %rbp", "48 c1 cd 02");
+        checkAsm("sal $0x3 %rbp", "48 c1 e5 03");
         checkAsm("shl $0x3 %rbp", "48 c1 e5 03");
         checkAsm("shr $0x1f %eax", "c1 e8 1f");
         checkAsm("sar $0x1f %esi", "c1 fe 1f");

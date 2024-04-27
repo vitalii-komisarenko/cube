@@ -409,8 +409,8 @@ public class Assembler {
         put("rcl", 2);
         put("rcr", 3);
         put("shl", 4);
+        put("sal", 4);
         put("shr", 5);
-        put("sal", 6);
         put("sar", 7);
     }};
 
