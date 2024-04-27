@@ -227,4 +227,9 @@ public class AssemblerTest {
         checkAsm("test %eax, %eax", "85 c0");
         checkAsm("test %rdi %rdi", "48 85 ff");
     }
+
+    @Test
+    public void testLea() {
+        checkAsm("lea 0xd0847(%rip) %rax", "48 8d 05 47 08 0d 00");
+    }
 }

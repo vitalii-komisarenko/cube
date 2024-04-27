@@ -83,6 +83,7 @@ public class Assembler {
         }
 
         public void setSecondRegister(String register) {
+            modrm_mod = 3;
             register = stringRemovePrefix(register, "%");
             if (is16BitRegister(register)) {
                 operand_size_override = true;
@@ -93,6 +94,30 @@ public class Assembler {
             rex_b = registerIndex > 7;
 
             modrm_rm = registerIndex & 0x7;
+        }
+
+        public void setIndirectOperand(String str) {
+            if (str.charAt(0) == '%') {
+                setSecondRegister(str);
+                return;
+            }
+            int openingBracketPos = str.indexOf('(');
+            String offsetStr = str.substring(0, openingBracketPos);
+            String register = str.substring(openingBracketPos + 1, str.length() - 1);
+            if (register.equals("%rip")) {
+                modrm_mod = 0;
+                modrm_rm = 5;
+                setImmediate32Bit(parseInterger(offsetStr));
+                return;
+            }
+        }
+
+        int parseInterger(String str) {
+            boolean isNegative = str.charAt(0) == '-';
+            str = stringRemovePrefix(str, "-");
+            str = stringRemovePrefix(str, "$");
+            int absValue = Integer.decode(str);
+            return isNegative ? -absValue : absValue;
         }
 
         void setImmediate(int _immediate, int numberOfBytes) {
@@ -341,6 +366,14 @@ public class Assembler {
                 instr.setSecondRegister(params.get(1));
                 return instr.encode();
             }
+        }
+
+        if (mnemonic.equals("lea")) {
+            ModrmBasedInstruction instr = new ModrmBasedInstruction();
+            instr.setOpcode(0x8d);
+            instr.setRegister(params.get(1));
+            instr.setIndirectOperand(params.get(0));
+            return instr.encode();
         }
 
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
