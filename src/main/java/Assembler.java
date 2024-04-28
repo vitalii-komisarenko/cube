@@ -195,6 +195,16 @@ public class Assembler {
         return encodeCommand(commandParts[0], params);
     }
 
+    public static ArrayList<Byte> encodeCommand(String line, int currentInstructionAddress) throws UnknownAssemblerCommandException {
+        line = line.replaceAll(",", " ");
+        line = line.replaceAll("^\\s+", "");
+        line = line.replaceAll("\\s+$", "");
+        line = line.replaceAll("\\s+", " ");
+        String commandParts[] = line.split(" ");
+        ArrayList<String> params = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(commandParts, 1, commandParts.length)));
+        return encodeCommand(commandParts[0], params, currentInstructionAddress);
+    }
+
     public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params) throws UnknownAssemblerCommandException {
         ArrayList<Byte> res = new ArrayList<Byte>();
 
@@ -379,6 +389,25 @@ public class Assembler {
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 
+    public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params, int currentInstructionAddress) throws UnknownAssemblerCommandException {
+        ArrayList<Byte> res = new ArrayList<Byte>();
+
+        if (mnemonic.equals("jmp")) {
+            int offset = Integer.decode("0x" + params.get(0)) - currentInstructionAddress;
+            if ((-128 <= (offset - 2)) && ((offset - 2) <= 127)) {
+                res.add((byte)0xeb);
+                res.add((byte)(offset - 2));
+                return res;
+            }
+            offset -= 5;
+            res.add((byte)0xe9);
+            res.addAll(encode32BitsImmediate(offset));
+            return res;
+        }
+
+        throw new UnknownAssemblerCommandException(mnemonic + " " + String.join(" ", params));
+    }
+
     static HashMap<String, Integer> registerIndexes = new HashMap<String, Integer>() {{
         put("ax", 0);
         put("cx", 1);
@@ -449,7 +478,7 @@ public class Assembler {
     static ArrayList<Byte> encode32BitsImmediate(int immediate) {
         ArrayList<Byte> bytes = new ArrayList<>();
         for (int i = 0; i < 4; ++i) {
-            bytes.add((byte)((immediate >> (8 * i)) & 0xF));
+            bytes.add((byte)((immediate >> (8 * i)) & 0xFF));
         }
         return bytes;
     }

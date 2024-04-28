@@ -58,6 +58,17 @@ public class AssemblerTest {
         }
     }
 
+    static void checkAsm(String assemblerLine, String expectedOutput, int currentInstructionAddress) {
+        try {
+            ArrayList<Byte> actual = Assembler.encodeCommand(assemblerLine, currentInstructionAddress);
+            ArrayList<Byte> expected = parseStringIntoBytes(expectedOutput);
+            assertByteArraysAreEqual(actual, expected);
+        }
+        catch (AssemblerException e) {
+            fail("AssemblerException: " + e.getMessage());
+        }
+    }
+
     @Test
     public void testNop() {
         try {
@@ -233,5 +244,12 @@ public class AssemblerTest {
     @Test
     public void testLea() {
         checkAsm("lea 0xd0847(%rip) %rax", "48 8d 05 47 08 0d 00");
+    }
+
+    @Test
+    public void testJumps() {
+        checkAsm("jmp 10df1f", "eb d5", 0x10df48);
+        checkAsm("jmp 10df1f", "eb e4", 0x10df39);
+        checkAsm("jmp 473d0", "e9 54 95 f3 ff", 0x10de77);
     }
 }
