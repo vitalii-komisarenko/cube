@@ -253,4 +253,10 @@ public class AssemblerTest {
         checkAsm("jmp 473d0", "e9 54 95 f3 ff", 0x10de77);
         checkAsm("call 30b20", "e8 63 2c f2 ff", 0x10deb8);
     }
+
+    @Test
+    public void testMov() {
+        checkAsm("mov $0x20 %edi", "bf 20 00 00 00");
+        checkAsm("mov $0x18 %r15d", "41 bf 18 00 00 00");
+    }
 }

@@ -229,6 +229,18 @@ public class Assembler {
             return res;
         }
 
+        if (mnemonic.equals("mov")) {
+            if ((params.get(0).charAt(0) == '$') && (params.get(1).charAt(0) == '%')){
+                int registerIndex = getRegisterIndex(params.get(1));
+                if (registerIndex > 7) {
+                    res.add((byte)0x41);
+                }
+                res.add((byte)(0xb8 + (registerIndex & 0x7)));
+                res.addAll(encode32BitsImmediate(params.get(0)));
+                return res;
+            }
+        }
+
         if (mnemonic.equals("movq")) {
         }
 
@@ -451,6 +463,9 @@ public class Assembler {
     }
 
     static int getRegisterIndex(String register) {
+        if (register.charAt(register.length() - 1) == 'd') {
+            register = register.substring(0, register.length() - 1);
+        }
         register = stringRemovePrefix(register, "%");
         register = stringRemovePrefix(register, "r");
         register = stringRemovePrefix(register, "e");
