@@ -247,9 +247,10 @@ public class AssemblerTest {
     }
 
     @Test
-    public void testJumps() {
+    public void testJumpsAndCalls() {
         checkAsm("jmp 10df1f", "eb d5", 0x10df48);
         checkAsm("jmp 10df1f", "eb e4", 0x10df39);
         checkAsm("jmp 473d0", "e9 54 95 f3 ff", 0x10de77);
+        checkAsm("call 30b20", "e8 63 2c f2 ff", 0x10deb8);
     }
 }

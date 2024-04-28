@@ -392,7 +392,7 @@ public class Assembler {
     public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params, int currentInstructionAddress) throws UnknownAssemblerCommandException {
         ArrayList<Byte> res = new ArrayList<Byte>();
 
-        if (mnemonic.equals("jmp")) {
+    if (mnemonic.equals("jmp") || mnemonic.equals("call")) {
             int offset = Integer.decode("0x" + params.get(0)) - currentInstructionAddress;
             if ((-128 <= (offset - 2)) && ((offset - 2) <= 127)) {
                 res.add((byte)0xeb);
@@ -400,7 +400,7 @@ public class Assembler {
                 return res;
             }
             offset -= 5;
-            res.add((byte)0xe9);
+            res.add((byte)(mnemonic.equals("jmp") ? 0xe9 : 0xe8));
             res.addAll(encode32BitsImmediate(offset));
             return res;
         }
