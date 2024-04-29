@@ -251,6 +251,8 @@ public class AssemblerTest {
         checkAsm("jmp 10df1f", "eb d5", 0x10df48);
         checkAsm("jmp 10df1f", "eb e4", 0x10df39);
         checkAsm("jmp 473d0", "e9 54 95 f3 ff", 0x10de77);
+        checkAsm("je ccabf", "0f 84 4b fd ff ff", 0xccd6e);
+        checkAsm("jne 10df4a", "75 6f", 0x10ded9);
         checkAsm("call 30b20", "e8 63 2c f2 ff", 0x10deb8);
     }
 

@@ -404,15 +404,16 @@ public class Assembler {
     public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params, int currentInstructionAddress) throws UnknownAssemblerCommandException {
         ArrayList<Byte> res = new ArrayList<Byte>();
 
-    if (mnemonic.equals("jmp") || mnemonic.equals("call")) {
+        if (instructionsWithRelativeAddressesOpcodes.containsKey(mnemonic)) {
             int offset = Integer.decode("0x" + params.get(0)) - currentInstructionAddress;
             if ((-128 <= (offset - 2)) && ((offset - 2) <= 127)) {
-                res.add((byte)0xeb);
+                res.addAll(instructionsWithRelativeAddressesOpcodes.get(mnemonic).get(0));
                 res.add((byte)(offset - 2));
                 return res;
             }
-            offset -= 5;
-            res.add((byte)(mnemonic.equals("jmp") ? 0xe9 : 0xe8));
+            ArrayList<Byte> opcode = instructionsWithRelativeAddressesOpcodes.get(mnemonic).get(1);
+            offset -= 4 + opcode.size();
+            res.addAll(opcode);
             res.addAll(encode32BitsImmediate(offset));
             return res;
         }
@@ -453,6 +454,170 @@ public class Assembler {
         put("sal", 4);
         put("shr", 5);
         put("sar", 7);
+    }};
+
+    // key: instruction mnemonic
+    // value: list of two elements: opcodes for 8-bit and 32-bit relative offsets
+    static HashMap<String, ArrayList<ArrayList<Byte>>> instructionsWithRelativeAddressesOpcodes = new HashMap<String, ArrayList<ArrayList<Byte>>>() {{
+        put("call", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ }}); // opcode does not exist
+            add(new ArrayList<Byte>() {{ add((byte)0xe8); }});
+        }});
+
+        put("jmp", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0xeb); }});
+            add(new ArrayList<Byte>() {{ add((byte)0xe9); }});
+        }});
+
+        put("jo", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x70); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x80); }});
+        }});
+
+        put("jno", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x71); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x81); }});
+        }});
+
+        put("jb", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x72); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x82); }});
+        }});
+
+        put("jnae", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x72); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x82); }});
+        }});
+
+        put("jc", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x72); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x82); }});
+        }});
+
+        put("jnb", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x73); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x83); }});
+        }});
+
+        put("jae", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x73); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x83); }});
+        }});
+
+        put("jnc", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x73); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x83); }});
+        }});
+
+        put("jz", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x74); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x84); }});
+        }});
+
+        put("je", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x74); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x84); }});
+        }});
+
+        put("jnz", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x75); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x85); }});
+        }});
+
+        put("jne", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x75); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x85); }});
+        }});
+
+        put("jbe", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x76); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x86); }});
+        }});
+
+        put("jna", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x76); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x86); }});
+        }});
+
+        put("jnbe", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x77); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x87); }});
+        }});
+
+        put("ja", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x77); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x87); }});
+        }});
+
+        put("js", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x78); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x88); }});
+        }});
+
+        put("jns", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x79); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x89); }});
+        }});
+
+        put("jp", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7a); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8a); }});
+        }});
+
+        put("jpe", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7a); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8a); }});
+        }});
+
+        put("jnp", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7b); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8b); }});
+        }});
+
+        put("jpo", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7b); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8b); }});
+        }});
+
+        put("jl", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7c); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8c); }});
+        }});
+
+        put("jnge", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7c); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8c); }});
+        }});
+
+        put("jnl", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7d); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8d); }});
+        }});
+
+        put("jge", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7d); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8d); }});
+        }});
+
+        put("jle", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7e); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8e); }});
+        }});
+
+        put("jng", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7e); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8e); }});
+        }});
+
+        put("jnle", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7f); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8f); }});
+        }});
+
+        put("jg", new ArrayList<ArrayList<Byte>>() {{
+            add(new ArrayList<Byte>() {{ add((byte)0x7f); }});
+            add(new ArrayList<Byte>() {{ add((byte)0x0f); add((byte)0x8f); }});
+        }});
     }};
 
     static String stringRemovePrefix(String str, String prefix) {
