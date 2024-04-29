@@ -253,6 +253,9 @@ public class AssemblerTest {
         checkAsm("jmp 473d0", "e9 54 95 f3 ff", 0x10de77);
         checkAsm("je ccabf", "0f 84 4b fd ff ff", 0xccd6e);
         checkAsm("jne 10df4a", "75 6f", 0x10ded9);
+        checkAsm("jle 10dd6a", "0f 8e 8e 01 00 00", 0x10dbd6);
+        checkAsm("jle 10d000", "0f 8e 76 fb ff ff", 0x10d484);
+        checkAsm("jle 10c950", "7e 22", 0x10c92c);
         checkAsm("call 30b20", "e8 63 2c f2 ff", 0x10deb8);
     }
 
