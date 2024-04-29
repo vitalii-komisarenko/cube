@@ -162,7 +162,7 @@ public class AssemblerTest {
     }
 
     @Test
-    public void testXorWithItself() {
+    public void testXor() {
         try {
             ArrayList<Byte> actual = Assembler.encodeCommand("xor", new ArrayList<>(Arrays.asList("%eax", "%eax")));
             ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x31, (byte)0xc0));
@@ -180,6 +180,8 @@ public class AssemblerTest {
         catch (AssemblerException e) {
             fail("AssemblerException: " + e.getMessage());
         }
+
+        checkAsm("xor $0x45 %r15", "49 83 f7 45");
     }
 
     @Test
