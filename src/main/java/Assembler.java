@@ -398,6 +398,14 @@ public class Assembler {
             return instr.encode();
         }
 
+        if (mnemonic.equals("inc") || mnemonic.equals("dec")) {
+            ModrmBasedInstruction instr = new ModrmBasedInstruction();
+            instr.setOpcode(is8BitParameter(params.get(0)) ? 0xfe : 0xff);
+            instr.setOpcodeExtension(mnemonic.equals("inc") ? 0 : 1);
+            instr.setIndirectOperand(params.get(0));
+            return instr.encode();
+        }
+
         throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
     }
 
@@ -665,5 +673,13 @@ public class Assembler {
 
     static ArrayList<Byte> encode32BitsImmediate(String immediate) {
         return encode32BitsImmediate(Integer.decode(immediate.substring(1, immediate.length())));
+    }
+
+    static boolean is8BitParameter(String parameter) {
+        if (parameter.startsWith("%r"))
+            return false;
+        if (parameter.startsWith("%e"))
+            return false;
+        return true;
     }
 }

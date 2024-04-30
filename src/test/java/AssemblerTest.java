@@ -266,4 +266,12 @@ public class AssemblerTest {
         checkAsm("mov $0x20 %edi", "bf 20 00 00 00");
         checkAsm("mov $0x18 %r15d", "41 bf 18 00 00 00");
     }
+
+    @Test
+    public void testIncDec() {
+        checkAsm("inc %eax", "ff c0");
+        checkAsm("dec %eax", "ff c8");
+        checkAsm("inc %r15", "49 ff c7");
+        checkAsm("dec %rax", "48 ff c8");
+    }
 }
