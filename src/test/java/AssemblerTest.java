@@ -106,6 +106,24 @@ public class AssemblerTest {
     }
 
     @Test
+    public void testArithmeticAccumulatorWithImmediate8bits() {
+        checkAsm("add $0 %al", "04 00");
+        checkAsm("add $0x1 %al", "04 01");
+        checkAsm("add $0xff %al", "04 ff");
+        checkAsm("add $0x7f %al", "04 7f");
+        checkAsm("add $-0x80 %al", "04 80");
+        checkAsm("add $-0xff %al", "04 01");
+
+        checkAsm("or $0x1 %al", "0c 01");
+        checkAsm("adc $0 %al", "14 00 ");
+        checkAsm("sbb $0 %al", "1c 00");
+        checkAsm("and $0xff %al", "24 ff");
+        checkAsm("sub $0x1 %al", "2c 01");
+        checkAsm("xor $0x1 %al", "34 01");
+        checkAsm("cmp $0x7f %al", "3c 7f");
+    }
+
+    @Test
     public void testArithmeticWithByteImmediate() {
         try {
             ArrayList<Byte> actual = Assembler.encodeCommand("add", new ArrayList<>(Arrays.asList("$0x8", "%rsp")));

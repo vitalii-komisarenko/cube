@@ -249,6 +249,11 @@ public class Assembler {
             int operationIndex = arithmeticOperationsCodes.get(mnemonic);
             if (params.get(0).charAt(0) == '$') {
                 int immediate = Integer.decode(params.get(0).substring(1, params.get(0).length()));
+                if (params.get(1).equals("%al")) {
+                    res.add((byte)(operationIndex*8 + 4));
+                    res.add((byte)(immediate));
+                    return res;
+                }
                 if ((-128 <= immediate) && (immediate <= 127)) {
                     ModrmBasedInstruction instr = new ModrmBasedInstruction();
                     instr.setOpcode(0x83);
@@ -447,6 +452,7 @@ public class Assembler {
         put("13", 13);
         put("14", 14);
         put("15", 15);
+        put("al", 0);
     }};
 
     static boolean is16BitRegister(String register) {
