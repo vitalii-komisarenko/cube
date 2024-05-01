@@ -97,23 +97,36 @@ public class Assembler {
             modrm_rm = registerIndex & 0x7;
         }
 
+        public void setRegisterForIndirectAddressing(String register) {
+            int registerIndex = getRegisterIndex(register);
+            rex_b = registerIndex > 7;
+            modrm_rm = registerIndex & 0x7;
+        }
+
         public void setIndirectOperand(String str) {
             if (str.charAt(0) == '%') {
                 setSecondRegister(str);
                 return;
             }
             int openingBracketPos = str.indexOf('(');
-            String offsetStr = str.substring(0, openingBracketPos);
+            String displacementStr = str.substring(0, openingBracketPos);
+            long displacement = parseInterger(displacementStr);
             String register = str.substring(openingBracketPos + 1, str.length() - 1);
             if (register.equals("%rip")) {
                 modrm_mod = 0;
                 modrm_rm = 5;
-                setImmediate32Bit(parseInterger(offsetStr));
+                setImmediate32Bit(displacement);
+                return;
+            }
+            if ((-128 <= displacement) || (displacement <= 127)) {
+                setRegisterForIndirectAddressing(register);
+                modrm_mod = 1;
+                setImmediate8Bit(displacement);
                 return;
             }
         }
 
-        int parseInterger(String str) {
+        long parseInterger(String str) {
             boolean isNegative = str.charAt(0) == '-';
             str = stringRemovePrefix(str, "-");
             str = stringRemovePrefix(str, "$");
@@ -273,12 +286,19 @@ public class Assembler {
                 }
             }
 
-            if (looksLikeRegister(params.get(0)) && looksLikeRegister(params.get(1))) {
+            if (looksLikeRegister(params.get(0))) {
                 ModrmBasedInstruction instr = new ModrmBasedInstruction();
                 instr.setOpcode(operationIndex * 8 + (registerIs8Bit(params.get(0)) ? 0 : 1));
-                instr.setMod(3);
                 instr.setRegister(params.get(0));
-                instr.setSecondRegister(params.get(1));
+                instr.setIndirectOperand(params.get(1));
+                return instr.encode();
+            }
+
+            if (looksLikeRegister(params.get(1))) {
+                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                instr.setOpcode(operationIndex * 8 + (registerIs8Bit(params.get(1)) ? 2 : 3));
+                instr.setRegister(params.get(1));
+                instr.setIndirectOperand(params.get(0));
                 return instr.encode();
             }
         }
@@ -545,6 +565,11 @@ public class Assembler {
     }
 
     static boolean is8BitParameter(String parameter) {
+        int openingBracketPos = parameter.indexOf('(');
+        if (openingBracketPos != -1) {
+            parameter = parameter.substring(openingBracketPos + 1, parameter.length());
+            parameter = stringRemoveSuffix(parameter, ")");
+        }
         if (parameter.startsWith("%r"))
             return false;
         if (parameter.startsWith("%e"))
