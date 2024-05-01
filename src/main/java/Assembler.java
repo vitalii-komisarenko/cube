@@ -268,6 +268,9 @@ public class Assembler {
                     res.addAll(encode32BitsImmediate(immediate));
                     return res;
                 }
+                if (Character.isDigit(params.get(0).charAt(0)) || (params.get(0).charAt(0) == '-')) {
+                    ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                }
             }
 
             if (looksLikeRegister(params.get(0)) && looksLikeRegister(params.get(1))) {
@@ -417,7 +420,7 @@ public class Assembler {
             return instr.encode();
         }
 
-        throw new UnknownAssemblerCommandException("");//mnemonic + " " + String.join(" ", params));
+        throw new UnknownAssemblerCommandException(mnemonic + " " + String.join(" ", params));
     }
 
     public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params, int currentInstructionAddress) throws UnknownAssemblerCommandException {

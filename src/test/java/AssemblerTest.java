@@ -130,6 +130,44 @@ public class AssemblerTest {
         checkAsm("sub $0x100 %eax", "2d 00 01 00 00");
         checkAsm("xor $0x100 %eax", "35 00 01 00 00");
         checkAsm("cmp $0x100 %eax", "3d 00 01 00 00");
+
+        checkAsm("add %r15b %cl", "44 00 f9");
+
+        checkAsm("add 0x1(%r8) %sil", "41 02 70 01");
+        checkAsm("add %sil 0x1(%r8)", "41 00 70 01");
+        checkAsm("or 0x1(%r8) %sil", "41 0a 70 01");
+        checkAsm("or %sil 0x1(%r8)", "41 08 70 01");
+        checkAsm("adc 0x1(%r8) %sil", "41 12 70 01");
+        checkAsm("adc %sil 0x1(%r8)", "41 10 70 01");
+        checkAsm("sbb 0x1(%r8) %sil", "41 1a 70 01");
+        checkAsm("sbb %sil 0x1(%r8)", "41 18 70 01");
+        checkAsm("and 0x1(%r8) %sil", "41 22 70 01");
+        checkAsm("and %sil 0x1(%r8)", "41 20 70 01");
+        checkAsm("sub 0x1(%r8) %sil", "41 2a 70 01");
+        checkAsm("sub %sil 0x1(%r8)", "41 28 70 01");
+        checkAsm("xor 0x1(%r8) %sil", "41 32 70 01");
+        checkAsm("xor %sil 0x1(%r8)", "41 30 70 01");
+        checkAsm("cmp 0x1(%r8) %sil", "41 3a 70 01");
+        checkAsm("cmp %sil 0x1(%r8)", "41 38 70 01");
+
+        checkAsm("add %rax %rbx", "48 01 c3");
+        checkAsm("add %r15 %rcx", "4c 01 f9");
+        checkAsm("add 0x1(%r8) %rsi", "49 03 70 01");
+        checkAsm("add %rsi 0x1(%r8)", "49 01 70 01");
+        checkAsm("or 0x1(%r8) %rsi", "49 0b 70 01");
+        checkAsm("or %rsi 0x1(%r8)", "49 09 70 01");
+        checkAsm("adc 0x1(%r8) %rsi", "49 13 70 01");
+        checkAsm("adc %rsi 0x1(%r8)", "49 11 70 01");
+        checkAsm("sbb 0x1(%r8) %rsi", "49 1b 70 01");
+        checkAsm("sbb %rsi 0x1(%r8)", "49 19 70 01");
+        checkAsm("and 0x1(%r8) %rsi", "49 23 70 01");
+        checkAsm("and %rsi 0x1(%r8)", "49 21 70 01");
+        checkAsm("sub 0x1(%r8) %rsi", "49 2b 70 01");
+        checkAsm("sub %rsi 0x1(%r8)", "49 29 70 01");
+        checkAsm("xor 0x1(%r8) %rsi", "49 33 70 01");
+        checkAsm("xor %rsi 0x1(%r8)", "49 31 70 01");
+        checkAsm("cmp 0x1(%r8) %rsi", "49 3b 70 01");
+        checkAsm("cmp %rsi 0x1(%r8)", "49 39 70 01");
     }
 
     @Test
