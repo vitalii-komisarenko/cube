@@ -458,6 +458,13 @@ public class Assembler {
         put("14", 14);
         put("15", 15);
         put("al", 0);
+        put("cl", 1);
+        put("dl", 2);
+        put("bl", 3);
+        put("spl", 4);
+        put("bpl", 5);
+        put("sil", 6);
+        put("dil", 7);
     }};
 
     static boolean is16BitRegister(String register) {
@@ -483,10 +490,17 @@ public class Assembler {
         return str;
     }
 
-    static int getRegisterIndex(String register) {
-        if (register.charAt(register.length() - 1) == 'd') {
-            register = register.substring(0, register.length() - 1);
+    static String stringRemoveSuffix(String str, String suffix) {
+        if (str.endsWith(suffix)) {
+            return str.substring(0, str.length() - suffix.length());
         }
+        return str;
+    }
+
+    static int getRegisterIndex(String register) {
+        register = stringRemoveSuffix(register, "d");
+        register = stringRemoveSuffix(register, "w");
+        register = stringRemoveSuffix(register, "b");
         register = stringRemovePrefix(register, "%");
         register = stringRemovePrefix(register, "r");
         register = stringRemovePrefix(register, "e");
