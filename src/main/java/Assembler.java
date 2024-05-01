@@ -275,7 +275,7 @@ public class Assembler {
 
             if (looksLikeRegister(params.get(0)) && looksLikeRegister(params.get(1))) {
                 ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(operationIndex * 8 + 1);
+                instr.setOpcode(operationIndex * 8 + (registerIs8Bit(params.get(0)) ? 0 : 1));
                 instr.setMod(3);
                 instr.setRegister(params.get(0));
                 instr.setSecondRegister(params.get(1));
@@ -471,6 +471,9 @@ public class Assembler {
     }};
 
     static boolean is16BitRegister(String register) {
+        if (is8BitParameter(register)) {
+            return false;
+        }
         register = stringRemovePrefix(register, "%");
         return registerIndexes.containsKey(register);
     }
@@ -500,7 +503,7 @@ public class Assembler {
         return str;
     }
 
-    static int getRegisterIndex(String register) {
+    static Integer getRegisterIndex(String register) {
         register = stringRemoveSuffix(register, "d");
         register = stringRemoveSuffix(register, "w");
         register = stringRemoveSuffix(register, "b");
@@ -511,10 +514,11 @@ public class Assembler {
     }
 
     static boolean looksLikeRegister(String register) {
-        register = stringRemovePrefix(register, "%");
-        register = stringRemovePrefix(register, "r");
-        register = stringRemovePrefix(register, "e");
-        return registerIndexes.containsKey(register);
+        return getRegisterIndex(register) != null;
+    }
+
+    static boolean registerIs8Bit(String register) {
+        return register.endsWith("l") || register.endsWith("b");
     }
 
     static HashMap<String, Integer> arithmeticOperationsCodes = new HashMap<String, Integer>() {{
@@ -545,6 +549,9 @@ public class Assembler {
             return false;
         if (parameter.startsWith("%e"))
             return false;
+        if (parameter.endsWith("i") || parameter.endsWith("p") || parameter.endsWith("d")) {
+            return false;
+        }
         return true;
     }
 }
