@@ -43,7 +43,9 @@ function get_command_mapping($filename) {
 }
 
 foreach (get_command_mapping($argv[1]) as $bytecode => $asm) {
-    echo "$bytecode => $asm\n";
+    $asm = str_replace(',', ' ', $asm);
+    $asm = preg_replace('/\s+/', ' ', $asm);
+    echo "checkAsm(\"$asm\", \"$bytecode\");\n";
 }
 
 ?>
