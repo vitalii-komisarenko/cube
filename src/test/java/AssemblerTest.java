@@ -121,6 +121,15 @@ public class AssemblerTest {
         checkAsm("sub $0x1 %al", "2c 01");
         checkAsm("xor $0x1 %al", "34 01");
         checkAsm("cmp $0x7f %al", "3c 7f");
+
+        checkAsm("add $0x100 %eax", "05 00 01 00 00");
+        checkAsm("or $0x100 %eax", "0d 00 01 00 00");
+        checkAsm("adc $0x100 %eax", "15 00 01 00 00");
+        checkAsm("sbb $0x100 %eax", "1d 00 01 00 00");
+        checkAsm("and $0x100 %eax", "25 00 01 00 00");
+        checkAsm("sub $0x100 %eax", "2d 00 01 00 00");
+        checkAsm("xor $0x100 %eax", "35 00 01 00 00");
+        checkAsm("cmp $0x100 %eax", "3d 00 01 00 00");
     }
 
     @Test

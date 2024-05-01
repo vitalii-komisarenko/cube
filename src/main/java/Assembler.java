@@ -121,17 +121,17 @@ public class Assembler {
             return isNegative ? -absValue : absValue;
         }
 
-        void setImmediate(int _immediate, int numberOfBytes) {
+        void setImmediate(long _immediate, int numberOfBytes) {
             for (int i = 0; i < numberOfBytes; ++i) {
                 immediate.add((byte)((_immediate >> (8 * i)) & 0xFF));
             }
         }
 
-        void setImmediate8Bit(int _immediate) {
+        void setImmediate8Bit(long _immediate) {
             setImmediate(_immediate, 1);
         }
 
-        void setImmediate32Bit(int _immediate) {
+        void setImmediate32Bit(long _immediate) {
             setImmediate(_immediate, 4);
         }
 
@@ -248,7 +248,7 @@ public class Assembler {
         if (arithmeticOperationsCodes.containsKey(mnemonic)) {
             int operationIndex = arithmeticOperationsCodes.get(mnemonic);
             if (params.get(0).charAt(0) == '$') {
-                int immediate = Integer.decode(params.get(0).substring(1, params.get(0).length()));
+                long immediate = Long.decode(params.get(0).substring(1, params.get(0).length()));
                 if (params.get(1).equals("%al")) {
                     res.add((byte)(operationIndex*8 + 4));
                     res.add((byte)(immediate));
@@ -262,6 +262,11 @@ public class Assembler {
                     instr.setSecondRegister(params.get(1));
                     instr.setImmediate8Bit(immediate);
                     return instr.encode();
+                }
+                if (params.get(1).equals("%eax")) {
+                    res.add((byte)(operationIndex*8 + 5));
+                    res.addAll(encode32BitsImmediate(immediate));
+                    return res;
                 }
             }
 
@@ -506,7 +511,7 @@ public class Assembler {
         put("cmp", 7);
     }};
 
-    static ArrayList<Byte> encode32BitsImmediate(int immediate) {
+    static ArrayList<Byte> encode32BitsImmediate(long immediate) {
         ArrayList<Byte> bytes = new ArrayList<>();
         for (int i = 0; i < 4; ++i) {
             bytes.add((byte)((immediate >> (8 * i)) & 0xFF));
@@ -515,7 +520,7 @@ public class Assembler {
     }
 
     static ArrayList<Byte> encode32BitsImmediate(String immediate) {
-        return encode32BitsImmediate(Integer.decode(immediate.substring(1, immediate.length())));
+        return encode32BitsImmediate(Long.decode(immediate.substring(1, immediate.length())));
     }
 
     static boolean is8BitParameter(String parameter) {
