@@ -2,8 +2,6 @@ package cube
 
 public class AssemblerStaticData {
     companion object {
-        class RegisterInfo(val size: Int, val index: Int)
-
         @JvmField public val registers = mapOf(
             "%rax" to RegisterInfo(8, 0),
             "%rcx" to RegisterInfo(8, 1),
