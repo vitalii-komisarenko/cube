@@ -1,8 +1,6 @@
 package cube
 
 public class AssemblerStaticData {
-    // key: instruction mnemonic
-    // value: list of two elements: opcodes for 8-bit and 32-bit relative offsets
     companion object {
         class RegisterInfo(val size: Int, val index: Int)
 
@@ -73,6 +71,8 @@ public class AssemblerStaticData {
             "%r15b" to RegisterInfo(1, 15)
         )
 
+        // key: instruction mnemonic
+        // value: list of two elements: opcodes for 8-bit and 32-bit relative offsets
         @JvmField public val instructionsWithRelativeAddressesOpcodes = hashMapOf(
             "call" to arrayListOf(
                 arrayListOf(), // opcode does not exist
