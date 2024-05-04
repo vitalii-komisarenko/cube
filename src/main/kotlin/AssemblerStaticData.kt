@@ -66,7 +66,23 @@ public class AssemblerStaticData {
             "%r12b" to RegisterInfo(1, 12),
             "%r13b" to RegisterInfo(1, 13),
             "%r14b" to RegisterInfo(1, 14),
-            "%r15b" to RegisterInfo(1, 15)
+            "%r15b" to RegisterInfo(1, 15),
+            "%xmm0" to RegisterInfo(16, 0),
+            "%xmm1" to RegisterInfo(16, 1),
+            "%xmm2" to RegisterInfo(16, 2),
+            "%xmm3" to RegisterInfo(16, 3),
+            "%xmm4" to RegisterInfo(16, 4),
+            "%xmm5" to RegisterInfo(16, 5),
+            "%xmm6" to RegisterInfo(16, 6),
+            "%xmm7" to RegisterInfo(16, 7),
+            "%xmm8" to RegisterInfo(16, 8),
+            "%xmm9" to RegisterInfo(16, 9),
+            "%xmm10" to RegisterInfo(16, 10),
+            "%xmm11" to RegisterInfo(16, 11),
+            "%xmm12" to RegisterInfo(16, 12),
+            "%xmm13" to RegisterInfo(16, 13),
+            "%xmm14" to RegisterInfo(16, 14),
+            "%xmm15" to RegisterInfo(16, 15),
         )
 
         // key: instruction mnemonic
