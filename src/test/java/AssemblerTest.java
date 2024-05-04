@@ -339,4 +339,12 @@ public class AssemblerTest {
         checkAsm("inc %r15", "49 ff c7");
         checkAsm("dec %rax", "48 ff c8");
     }
+
+    @Test
+    public void testSomeXmmInstructions() {
+        checkAsm("pxor %xmm0 %xmm0", "66 0f ef c0");
+        checkAsm("pcmpeqd %xmm0 %xmm0", "66 0f 76 c0");
+        checkAsm("movaps %xmm0 (%r14)", "41 0f 29 06");
+        checkAsm("movdqa 0x410(%rsp) %xmm0", "66 0f 6f 84 24 10 04");
+    }
 }
