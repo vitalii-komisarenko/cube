@@ -3,6 +3,7 @@ package cube;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import cube.AssemblerStaticData;
 
 public class Assembler {
@@ -40,10 +41,7 @@ public class Assembler {
             }
 
             // OpCode
-            if (opcode > 0xFF) {
-                res.add((byte)(opcode >> 8));
-            }
-            res.add((byte)(opcode & 0xFF));
+            res.addAll(encodeOpCode(opcode));
 
             // ModR/M byte
             int modrm = (modrm_mod << 6) | (modrm_reg << 3) | (modrm_rm);
@@ -236,10 +234,7 @@ public class Assembler {
 
         if (params.size() == 0) {
             int opcode = zeroParamsCommands.get(mnemonic);
-            if (opcode > 0xFF) {
-                res.add((byte)(opcode >> 8));
-            }
-            res.add((byte)(opcode & 0xFF));
+            res.addAll(encodeOpCode(opcode));
             return res;
         }
 
@@ -551,6 +546,18 @@ public class Assembler {
         put("xor", 6);
         put("cmp", 7);
     }};
+
+    static List<Byte> encodeOpCode(int opcode) {
+        List<Byte> res = new ArrayList<Byte>(3);
+        if (opcode > 0xFFFF) {
+            res.add((byte)(opcode >> 16));
+        }
+        if (opcode > 0xFF) {
+            res.add((byte)(opcode >> 8));
+        }
+        res.add((byte)(opcode & 0xFF));
+        return res;
+    }
 
     static ArrayList<Byte> encode32BitsImmediate(long immediate) {
         ArrayList<Byte> bytes = new ArrayList<>();
