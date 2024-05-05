@@ -17,14 +17,8 @@ public class Assembler {
             _64_BITS,
         }
 
-        public static ModrmBasedInstruction fromRegisterAndImmediate(String register, int immediate) {
-            ModrmBasedInstruction res = new ModrmBasedInstruction();
-            return res;
-        }
-
-        public static ModrmBasedInstruction fromRegisterDisplacementAndImmediate(String register, int displacement, int immediate) {
-            ModrmBasedInstruction res = new ModrmBasedInstruction();
-            return res;
+        public ModrmBasedInstruction(int opcode) {
+            this.opcode = opcode;
         }
 
         ArrayList<Byte> encode() {
@@ -52,10 +46,6 @@ public class Assembler {
             res.addAll(immediate);
 
             return res;
-        }
-
-        public void setOpcode(int _opcode) {
-            opcode = _opcode;
         }
 
         public void setMod(int mod) {
@@ -258,8 +248,7 @@ public class Assembler {
                     return res;
                 }
                 if ((-128 <= immediate) && (immediate <= 127)) {
-                    ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                    instr.setOpcode(0x83);
+                    ModrmBasedInstruction instr = new ModrmBasedInstruction(0x83);
                     instr.setMod(3);
                     instr.setOpcodeExtension(operationIndex);
                     instr.setSecondRegister(params.get(1));
@@ -272,21 +261,20 @@ public class Assembler {
                     return res;
                 }
                 if (Character.isDigit(params.get(0).charAt(0)) || (params.get(0).charAt(0) == '-')) {
-                    ModrmBasedInstruction instr = new ModrmBasedInstruction();
                 }
             }
 
             if (looksLikeRegister(params.get(0))) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(operationIndex * 8 + (registerIs8Bit(params.get(0)) ? 0 : 1));
+                int opcode = operationIndex * 8 + (registerIs8Bit(params.get(0)) ? 0 : 1);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(opcode);
                 instr.setRegister(params.get(0));
                 instr.setIndirectOperand(params.get(1));
                 return instr.encode();
             }
 
             if (looksLikeRegister(params.get(1))) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(operationIndex * 8 + (registerIs8Bit(params.get(1)) ? 2 : 3));
+                int opcode = operationIndex * 8 + (registerIs8Bit(params.get(1)) ? 2 : 3);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(opcode);
                 instr.setRegister(params.get(1));
                 instr.setIndirectOperand(params.get(0));
                 return instr.encode();
@@ -295,8 +283,7 @@ public class Assembler {
 
         if (rotationAndShiftIndexes.containsKey(mnemonic)) {
             if (params.get(0).charAt(0) == '$') {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(0xc1);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0xc1);
                 instr.setMod(3);
                 instr.setOpcodeExtension(rotationAndShiftIndexes.get(mnemonic));
                 instr.setSecondRegister(params.get(1));
@@ -307,8 +294,7 @@ public class Assembler {
 
         if (mnemonic.equals("mul")) {
             if (params.size() == 1) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(0xf7);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0xf7);
                 instr.setMod(3);
                 instr.setOpcodeExtension(4);
                 instr.setSecondRegister(params.get(0));
@@ -318,9 +304,8 @@ public class Assembler {
 
         if (mnemonic.equals("imul")) {
             if (params.get(0).startsWith("$") && params.get(1).startsWith("%") && params.get(2).startsWith("%")) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0x69);
                 int immediate = Integer.decode(params.get(0).substring(1, params.get(0).length()));
-                instr.setOpcode(0x69);
                 instr.setMod(3);
                 instr.setRegister(params.get(1));
                 instr.setSecondRegister(params.get(2));
@@ -331,8 +316,7 @@ public class Assembler {
 
         if (mnemonic.equals("div")) {
             if (params.size() == 1) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(0xf7);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0xf7);
                 instr.setMod(3);
                 instr.setOpcodeExtension(6);
                 instr.setSecondRegister(params.get(0));
@@ -342,8 +326,7 @@ public class Assembler {
 
         if (mnemonic.equals("idiv")) {
             if (params.size() == 1) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(0xf7);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0xf7);
                 instr.setMod(3);
                 instr.setOpcodeExtension(7);
                 instr.setSecondRegister(params.get(0));
@@ -353,8 +336,7 @@ public class Assembler {
 
         if (mnemonic.equals("not")) {
             if (params.size() == 1) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(0xf7);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0xf7);
                 instr.setMod(3);
                 instr.setOpcodeExtension(2);
                 instr.setSecondRegister(params.get(0));
@@ -394,8 +376,7 @@ public class Assembler {
             if (getRegisterIndex(params.get(1)) == 0) {
             }
             else {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(0x87);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0x87);
                 instr.setMod(3);
                 instr.setRegister(params.get(0));
                 instr.setSecondRegister(params.get(1));
@@ -405,8 +386,7 @@ public class Assembler {
 
         if (mnemonic.equals("test")) {
             if ((params.get(0).charAt(0) == '%') && (params.get(0).charAt(0) == '%')) {
-                ModrmBasedInstruction instr = new ModrmBasedInstruction();
-                instr.setOpcode(0x85);
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(0x85);
                 instr.setMod(3);
                 instr.setRegister(params.get(0));
                 instr.setSecondRegister(params.get(1));
@@ -415,24 +395,22 @@ public class Assembler {
         }
 
         if (mnemonic.equals("lea")) {
-            ModrmBasedInstruction instr = new ModrmBasedInstruction();
-            instr.setOpcode(0x8d);
+            ModrmBasedInstruction instr = new ModrmBasedInstruction(0x8d);
             instr.setRegister(params.get(1));
             instr.setIndirectOperand(params.get(0));
             return instr.encode();
         }
 
         if (mnemonic.equals("inc") || mnemonic.equals("dec")) {
-            ModrmBasedInstruction instr = new ModrmBasedInstruction();
-            instr.setOpcode(is8BitParameter(params.get(0)) ? 0xfe : 0xff);
+            ModrmBasedInstruction instr = new ModrmBasedInstruction(is8BitParameter(params.get(0)) ? 0xfe : 0xff);
             instr.setOpcodeExtension(mnemonic.equals("inc") ? 0 : 1);
             instr.setIndirectOperand(params.get(0));
             return instr.encode();
         }
 
         if (modrmBasedToRegistersNot8Bits.containsKey(mnemonic) && (params.size() == 2) && (params.get(0).charAt(0) == '%')) {
-            ModrmBasedInstruction instr = new ModrmBasedInstruction();
-            instr.setOpcode(modrmBasedToRegistersNot8Bits.get(mnemonic));
+            int opcode = modrmBasedToRegistersNot8Bits.get(mnemonic);
+            ModrmBasedInstruction instr = new ModrmBasedInstruction(opcode);
             instr.setRegister(params.get(1));
             instr.setIndirectOperand(params.get(0));
             return instr.encode();
