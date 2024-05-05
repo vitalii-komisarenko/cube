@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import cube.AssemblerStaticData;
+import static cube.AssemblerStaticData.*;
 
 public class Assembler {
     public static class ModrmBasedInstruction {
@@ -66,33 +67,28 @@ public class Assembler {
             modrm_reg = registerIndex & 0x7;
         }
 
-        public void setRegister(String register) {
-            register = stringRemovePrefix(register, "%");
-            if (is16BitRegister(register)) {
+        public void setRegister(String registerName) {
+            RegisterInfo r = registers.get(registerName);
+            if (r.size == 2) {
                 operand_size_override = true;
             }
-            if (register.startsWith("r")) {
-                rex_w = true;
-            }
-            setRegister(getRegisterIndex(register));
+            rex_w = r.size == 8;
+            setRegister(r.index);
         }
 
         public void setOpcodeExtension(int opcodeExtension) {
             modrm_reg = opcodeExtension;
         }
 
-        public void setSecondRegister(String register) {
+        public void setSecondRegister(String registerName) {
             modrm_mod = 3;
-            register = stringRemovePrefix(register, "%");
-            if (is16BitRegister(register)) {
+            RegisterInfo r = registers.get(registerName);
+            if (r.size == 2) {
                 operand_size_override = true;
             }
-            rex_w = register.startsWith("r");
-
-            int registerIndex = getRegisterIndex(register);
-            rex_b = registerIndex > 7;
-
-            modrm_rm = registerIndex & 0x7;
+            rex_w = r.size == 8;
+            rex_b = r.index > 7;
+            modrm_rm = r.index & 0x7;
         }
 
         public void setRegisterForIndirectAddressing(String register) {
@@ -435,6 +431,14 @@ public class Assembler {
             return instr.encode();
         }
 
+        if (modrmBasedToRegistersNot8Bits.containsKey(mnemonic) && (params.size() == 2) && (params.get(0).charAt(0) == '%')) {
+            ModrmBasedInstruction instr = new ModrmBasedInstruction();
+            instr.setOpcode(modrmBasedToRegistersNot8Bits.get(mnemonic));
+            instr.setRegister(params.get(1));
+            instr.setIndirectOperand(params.get(0));
+            return instr.encode();
+        }
+
         throw new UnknownAssemblerCommandException(mnemonic + " " + String.join(" ", params));
     }
 
@@ -484,14 +488,6 @@ public class Assembler {
         put("sil", 6);
         put("dil", 7);
     }};
-
-    static boolean is16BitRegister(String register) {
-        if (is8BitParameter(register)) {
-            return false;
-        }
-        register = stringRemovePrefix(register, "%");
-        return registerIndexes.containsKey(register);
-    }
 
     static HashMap<String, Integer> rotationAndShiftIndexes = new HashMap<String, Integer>() {{
         put("rol", 0);
