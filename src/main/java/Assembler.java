@@ -193,28 +193,28 @@ public class Assembler {
         }
     }
 
-    public static ArrayList<Byte> encodeCommand(String line) throws UnknownAssemblerCommandException {
+    public static List<Byte> encodeCommand(String line) throws UnknownAssemblerCommandException {
         line = line.replaceAll(",", " ");
         line = line.replaceAll("^\\s+", "");
         line = line.replaceAll("\\s+$", "");
         line = line.replaceAll("\\s+", " ");
         String commandParts[] = line.split(" ");
-        ArrayList<String> params = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(commandParts, 1, commandParts.length)));
+        List<String> params = Arrays.asList(Arrays.copyOfRange(commandParts, 1, commandParts.length));
         return encodeCommand(commandParts[0], params);
     }
 
-    public static ArrayList<Byte> encodeCommand(String line, int currentInstructionAddress) throws UnknownAssemblerCommandException {
+    public static List<Byte> encodeCommand(String line, int currentInstructionAddress) throws UnknownAssemblerCommandException {
         line = line.replaceAll(",", " ");
         line = line.replaceAll("^\\s+", "");
         line = line.replaceAll("\\s+$", "");
         line = line.replaceAll("\\s+", " ");
         String commandParts[] = line.split(" ");
-        ArrayList<String> params = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(commandParts, 1, commandParts.length)));
+        List<String> params = Arrays.asList(Arrays.copyOfRange(commandParts, 1, commandParts.length));
         return encodeCommand(commandParts[0], params, currentInstructionAddress);
     }
 
-    public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params) throws UnknownAssemblerCommandException {
-        ArrayList<Byte> res = new ArrayList<Byte>();
+    public static List<Byte> encodeCommand(String mnemonic, List<String> params) throws UnknownAssemblerCommandException {
+        List<Byte> res = new ArrayList<Byte>();
 
         HashMap<String, Integer> zeroParamsCommands = new HashMap<String, Integer>() {{
             put("nop", 0x90);
@@ -230,8 +230,7 @@ public class Assembler {
 
         if (params.size() == 0) {
             int opcode = zeroParamsCommands.get(mnemonic);
-            res.addAll(encodeOpCode(opcode));
-            return res;
+            return encodeOpCode(opcode);
         }
 
         if (mnemonic.equals("mov")) {
@@ -442,8 +441,8 @@ public class Assembler {
         throw new UnknownAssemblerCommandException(mnemonic + " " + String.join(" ", params));
     }
 
-    public static ArrayList<Byte> encodeCommand(String mnemonic, ArrayList<String> params, int currentInstructionAddress) throws UnknownAssemblerCommandException {
-        ArrayList<Byte> res = new ArrayList<Byte>();
+    public static List<Byte> encodeCommand(String mnemonic, List<String> params, int currentInstructionAddress) throws UnknownAssemblerCommandException {
+        List<Byte> res = new ArrayList<Byte>();
 
         if (AssemblerStaticData.instructionsWithRelativeAddressesOpcodes.containsKey(mnemonic)) {
             int offset = Integer.decode("0x" + params.get(0)) - currentInstructionAddress;

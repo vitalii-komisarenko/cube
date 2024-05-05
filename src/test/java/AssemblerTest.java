@@ -5,18 +5,19 @@ import cube.Assembler.AssemblerException;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class AssemblerTest {
-    static void printArrayListOfBytes(ArrayList<Byte> list) {
+    static void printArrayListOfBytes(List<Byte> list) {
         System.out.println("  <" + list.size() + " item(s)>");
         for (Byte item : list) {
             System.out.println("    " + item);
         }
     }
 
-    static void assertByteArraysAreEqual(ArrayList<Byte> first, ArrayList<Byte> second) {
+    static void assertByteArraysAreEqual(List<Byte> first, List<Byte> second) {
         if (first.size() != second.size()) {
             System.out.println("Lists of bytes are different");
             System.out.println("First:");
@@ -38,9 +39,9 @@ public class AssemblerTest {
         }
     }
 
-    static ArrayList<Byte> parseStringIntoBytes(String input) {
+    static List<Byte> parseStringIntoBytes(String input) {
         // a helper function to parse strings like this: 12 34 56 78 90 ab cd ef
-        ArrayList<Byte> res = new ArrayList<>();
+        List<Byte> res = new ArrayList<>();
         for (String byteString : input.split("\\s+")) {
             res.add((byte)Integer.parseInt(byteString, 16));
         }
@@ -49,8 +50,8 @@ public class AssemblerTest {
 
     static void checkAsm(String assemblerLine, String expectedOutput) {
         try {
-            ArrayList<Byte> actual = Assembler.encodeCommand(assemblerLine);
-            ArrayList<Byte> expected = parseStringIntoBytes(expectedOutput);
+            List<Byte> actual = Assembler.encodeCommand(assemblerLine);
+            List<Byte> expected = parseStringIntoBytes(expectedOutput);
             assertByteArraysAreEqual(actual, expected);
         }
         catch (AssemblerException e) {
@@ -60,8 +61,8 @@ public class AssemblerTest {
 
     static void checkAsm(String assemblerLine, String expectedOutput, int currentInstructionAddress) {
         try {
-            ArrayList<Byte> actual = Assembler.encodeCommand(assemblerLine, currentInstructionAddress);
-            ArrayList<Byte> expected = parseStringIntoBytes(expectedOutput);
+            List<Byte> actual = Assembler.encodeCommand(assemblerLine, currentInstructionAddress);
+            List<Byte> expected = parseStringIntoBytes(expectedOutput);
             assertByteArraysAreEqual(actual, expected);
         }
         catch (AssemblerException e) {
@@ -71,38 +72,17 @@ public class AssemblerTest {
 
     @Test
     public void testNop() {
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("nop", new ArrayList<String>());
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x90));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
+        checkAsm("nop", "90");
     }
 
     @Test
     public void testRet() {
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("ret", new ArrayList<String>());
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0xc3));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
+        checkAsm("ret", "c3");
     }
 
     @Test
     public void testSyscall() {
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("syscall", new ArrayList<String>());
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x0f, (byte)0x05));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
+        checkAsm("syscall", "0f 05");
     }
 
     @Test
@@ -172,51 +152,11 @@ public class AssemblerTest {
 
     @Test
     public void testArithmeticWithByteImmediate() {
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("add", new ArrayList<>(Arrays.asList("$0x8", "%rsp")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x83, (byte)0xc4, (byte)0x08));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
-
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("adc", new ArrayList<>(Arrays.asList("$0x0", "%rbp")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x83, (byte)0xd5, (byte)0x00));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
-
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("sub", new ArrayList<>(Arrays.asList("$0x8", "%rsp")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x83, (byte)0xec, (byte)0x08));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
-
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("and", new ArrayList<>(Arrays.asList("$0x40", "%esi")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x83, (byte)0xe6, (byte)0x40));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
-
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("or", new ArrayList<>(Arrays.asList("$0x20", "%eax")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x83, (byte)0xc8, (byte)0x20));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
-
+        checkAsm("add $0x8 %rsp", "48 83 c4 08");
+        checkAsm("adc $0x0 %rbp", "48 83 d5 00");
+        checkAsm("sub $0x8 %rsp", "48 83 ec 08");
+        checkAsm("and $0x40 %esi", "83 e6 40");
+        checkAsm("or $0x20 %eax", "83 c8 20");
         checkAsm("cmp $0x1 %eax", "83 f8 01");
     }
 
@@ -228,38 +168,14 @@ public class AssemblerTest {
 
     @Test
     public void testXor() {
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("xor", new ArrayList<>(Arrays.asList("%eax", "%eax")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x31, (byte)0xc0));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
-
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("xor", new ArrayList<>(Arrays.asList("%esi", "%esi")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x31, (byte)0xf6));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
-
+        checkAsm("xor %eax %eax", "31 c0");
+        checkAsm("xor %esi %esi", "31 f6");
         checkAsm("xor $0x45 %r15", "49 83 f7 45");
     }
 
     @Test
     public void testImul() {
-        try {
-            ArrayList<Byte> actual = Assembler.encodeCommand("imul", new ArrayList<>(Arrays.asList("$0xf4240", "%rdx", "%rdx")));
-            ArrayList<Byte> expected = new ArrayList<Byte>(Arrays.asList((byte)0x48, (byte)0x69, (byte)0xd2, (byte)0x40,
-                                                                         (byte)0x42, (byte)0x0f, (byte)0x00));
-            assertByteArraysAreEqual(actual, expected);
-        }
-        catch (AssemblerException e) {
-            fail("AssemblerException: " + e.getMessage());
-        }
+        checkAsm("imul $0xf4240 %rdx %rdx", "48 69 d2 40 42 0f 00");
     }
 
     @Test
