@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import cube.AssemblerStaticData;
 import static cube.AssemblerStaticData.*;
 
@@ -204,6 +205,23 @@ public class Assembler {
     }
 
     public static List<Byte> encodeCommand(String mnemonic, List<String> params) throws UnknownAssemblerCommandException {
+        Map<String, Byte> segmentPrefixes = new HashMap<String, Byte>() {{
+            put("%fs:", (byte)0x64);
+            put("%gs:", (byte)0x65);
+        }};
+
+        Byte segmentPrefix = null;
+
+        for (String param: params) {
+            for (String prefix: segmentPrefixes.keySet()) {
+                if (param.startsWith(prefix)) {
+                    segmentPrefix = segmentPrefixes.get(prefix);
+                    param = param.substring(prefix.length(), param.length());
+                    break;
+                }
+            }
+        }
+
         List<Byte> res = new ArrayList<Byte>();
 
         HashMap<String, Integer> zeroParamsCommands = new HashMap<String, Integer>() {{

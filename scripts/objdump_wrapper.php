@@ -10,7 +10,7 @@ function get_command_mapping($filename) {
         if (!str_contains($line, ':')) {
             return ['', ''];
         }
-        $line = explode(':', $line)[1];
+        $line = explode(':', $line, 2)[1];
         $hex = substr($line, 0, 23);
         $asm = substr($line, 23);
         return [trim($hex), trim($asm)];

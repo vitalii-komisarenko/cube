@@ -263,4 +263,12 @@ public class AssemblerTest {
         checkAsm("movaps %xmm0 (%r14)", "41 0f 29 06");
         checkAsm("movdqa 0x410(%rsp) %xmm0", "66 0f 6f 84 24 10 04");
     }
+
+    @Test
+    public void checkSegmentPrefixOverrides() {
+        checkAsm("mov %fs:0x0 %eax", "64 8b 04 25 00 00 00 00");
+        checkAsm("mov %gs:0x1000 %eax", "65 8b 04 25 00 10 00 00");
+        checkAsm("mov %r15 %fs:0x0", "64 4c 89 3c 25 00 00 00 00");
+        checkAsm("mov %rbx %gs:0x1000", "65 48 89 1c 25 00 10 00 00");
+    }
 }

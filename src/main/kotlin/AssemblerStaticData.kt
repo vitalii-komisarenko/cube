@@ -219,6 +219,7 @@ public class AssemblerStaticData {
         )
 
         @JvmField public val modrmBasedToRegistersNot8Bits = mapOf(
+            "mov" to 0x8b,
             "addsubpd" to 0x660fd0,
             "addsubps" to 0xf20fd0,
             "psrlw" to 0x660fd1,
