@@ -19,11 +19,11 @@ public class Elf {
     Elf() {}
 
     void addZeroInitializedSection(String name, long size) {
-        sections.put(name, new Section(size, true, null);
+        sections.put(name, new Section(size, true, null));
     }
 
     void addSection(String name, List<Byte> data) {
-        sections.put(name, new Section(data.size(), false, data);
+        sections.put(name, new Section(data.size(), false, data));
     }
 
     List<Byte> encode() {
