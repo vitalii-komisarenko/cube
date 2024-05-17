@@ -96,22 +96,41 @@ public class Assembler {
             int openingBracketPos = str.indexOf('(');
             String displacementStr = str.substring(0, openingBracketPos);
             long displacement = parseInterger(displacementStr);
-            String register = str.substring(openingBracketPos + 1, str.length() - 1);
-            if (register.equals("%rip")) {
+            String registerName = str.substring(openingBracketPos + 1, str.length() - 1);
+            if (registerName.equals("%rip")) {
                 modrm_mod = 0;
                 modrm_rm = 5;
                 setImmediate32Bit(displacement);
                 return;
             }
+
+            RegisterInfo r = registers.get(registerName);
+
+            if ((displacement == 0) && (r.index % 8 != 5)) {
+                modrm_mod = 0;
+                setRegisterForIndirectAddressing(registerName);
+                return;
+            }
+
             if ((-128 <= displacement) || (displacement <= 127)) {
-                setRegisterForIndirectAddressing(register);
+                setRegisterForIndirectAddressing(registerName);
                 modrm_mod = 1;
                 setImmediate8Bit(displacement);
+                return;
+            }
+
+            if ((-0x8000 <= displacement) || (displacement <= 0x7fff)) {
+                setRegisterForIndirectAddressing(registerName);
+                modrm_mod = 2;
+                setImmediate32Bit(displacement);
                 return;
             }
         }
 
         long parseInterger(String str) {
+            if (str.equals("")) {
+                return 0;
+            }
             boolean isNegative = str.charAt(0) == '-';
             str = stringRemovePrefix(str, "-");
             str = stringRemovePrefix(str, "$");
@@ -426,7 +445,15 @@ public class Assembler {
             return instr.encode();
         }
 
-        if (modrmBasedToRegistersNot8Bits.containsKey(mnemonic) && (params.size() == 2) && (params.get(0).charAt(0) == '%')) {
+        if (modrmBasedFromRegistersNot8Bits.containsKey(mnemonic) && (params.size() == 2) && (params.get(0).charAt(0) == '%')) {
+            int opcode = modrmBasedFromRegistersNot8Bits.get(mnemonic);
+            ModrmBasedInstruction instr = new ModrmBasedInstruction(opcode);
+            instr.setRegister(params.get(0));
+            instr.setIndirectOperand(params.get(1));
+            return instr.encode();
+        }
+
+        if (modrmBasedToRegistersNot8Bits.containsKey(mnemonic) && (params.size() == 2) && (params.get(1).charAt(0) == '%')) {
             int opcode = modrmBasedToRegistersNot8Bits.get(mnemonic);
             ModrmBasedInstruction instr = new ModrmBasedInstruction(opcode);
             instr.setRegister(params.get(1));
