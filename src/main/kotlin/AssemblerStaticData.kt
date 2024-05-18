@@ -272,5 +272,31 @@ public class AssemblerStaticData {
         @JvmField public val modrmBasedFromRegistersNot8Bits = mapOf(
             "movaps" to 0x0f29,
         )
+
+        val segmentPrefixes = mapOf(
+            "%fs:" to 0x64.toByte(),
+            "%gs:" to 0x65.toByte(),
+        )
+
+        fun getSegmentOverrideInfo(params: List<String>): Pair<Int?, Byte?> {
+            for ((index, param) in params.withIndex()) {
+                for ((prefix, encodingByte) in segmentPrefixes) {
+                    if (param.startsWith(prefix)) {
+                        return Pair(index, encodingByte);
+                    }
+                }
+            }
+            return Pair(null, null);
+        }
+
+        @JvmStatic
+        public fun getSegmentOverrideIndex(params: List<String>): Int? {
+            return getSegmentOverrideInfo(params).first;
+        }
+
+        @JvmStatic
+        public fun getSegmentOverrideEncodingByte(params: List<String>): Byte? {
+            return getSegmentOverrideInfo(params).second;
+        }
     }
 }
