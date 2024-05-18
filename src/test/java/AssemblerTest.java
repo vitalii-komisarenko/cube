@@ -266,7 +266,16 @@ public class AssemblerTest {
 
     @Test
     public void checkSegmentPrefixOverrides() {
-        checkAsm("mov %fs:0x0 %eax", "64 8b 04 25 00 00 00 00");
+        checkAsm("mov %fs:0x0,%eax", "64 8b 04 25 00 00 00 00");
+        checkAsm("mov %fs:0x12,%eax", "64 8b 04 25 12 00 00 00");
+        checkAsm("mov %fs:0x1234,%eax", "64 8b 04 25 34 12 00 00");
+        checkAsm("mov %fs:0x12345678,%eax", "64 8b 04 25 78 56 34 12");
+
+        checkAsm("mov %r15,%gs:0x0", "65 4c 89 3c 25 00 00 00 00");
+        checkAsm("mov %r15,%gs:0x12", "65 4c 89 3c 25 12 00 00 00");
+        checkAsm("mov %r15,%gs:0x1234", "65 4c 89 3c 25 34 12 00 00");
+        checkAsm("mov %r15,%gs:0x12345678", "65 4c 89 3c 25 78 56 34 12");
+
         checkAsm("mov %gs:0x1000 %eax", "65 8b 04 25 00 10 00 00");
         checkAsm("mov %r15 %fs:0x0", "64 4c 89 3c 25 00 00 00 00");
         checkAsm("mov %rbx %gs:0x1000", "65 48 89 1c 25 00 10 00 00");
