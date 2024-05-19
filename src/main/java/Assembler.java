@@ -43,6 +43,9 @@ public class Assembler {
             int modrm = (modrm_mod << 6) | (modrm_reg << 3) | (modrm_rm);
             res.add((byte)modrm);
 
+            // SIB
+            res.addAll(sib_payload);
+
             // Immediate
             res.addAll(immediate);
 
@@ -138,6 +141,13 @@ public class Assembler {
             return isNegative ? -absValue : absValue;
         }
 
+        void setSibDisplacementOnly(long displacement) {
+            modrm_mod = 0;
+            modrm_rm = 4;
+            sib_payload.add((byte)0x25);
+            sib_payload.addAll(encode32BitsImmediate(displacement));
+        }
+
         void setImmediate(long _immediate, int numberOfBytes) {
             for (int i = 0; i < numberOfBytes; ++i) {
                 immediate.add((byte)((_immediate >> (8 * i)) & 0xFF));
@@ -165,7 +175,8 @@ public class Assembler {
         int modrm_reg;
         int modrm_rm;
 
-        ArrayList<Byte> immediate = new ArrayList<Byte>();
+        List<Byte> sib_payload = new ArrayList<Byte>();
+        List<Byte> immediate = new ArrayList<Byte>();
     }
 
     public static class AssemblerException extends Exception {
@@ -224,24 +235,25 @@ public class Assembler {
     }
 
     public static List<Byte> encodeCommand(String mnemonic, List<String> params) throws UnknownAssemblerCommandException {
-        Map<String, Byte> segmentPrefixes = new HashMap<String, Byte>() {{
-            put("%fs:", (byte)0x64);
-            put("%gs:", (byte)0x65);
-        }};
+        List<Byte> res = new ArrayList<Byte>();
 
-        Byte segmentPrefix = null;
+        Byte segmentPrefix = getSegmentOverrideEncodingByte(params);
+        Integer parameterWithSegmentPrefixIndex = getSegmentOverrideIndex(params);
 
-        for (String param: params) {
-            for (String prefix: segmentPrefixes.keySet()) {
-                if (param.startsWith(prefix)) {
-                    segmentPrefix = segmentPrefixes.get(prefix);
-                    param = param.substring(prefix.length(), param.length());
-                    break;
-                }
+        if (segmentPrefix != null) {
+            res.add(segmentPrefix);
+
+            if (mnemonic.equals("mov")) {
+                int opcode = parameterWithSegmentPrefixIndex == 0 ? 0x8b : 0x89;
+                ModrmBasedInstruction instr = new ModrmBasedInstruction(opcode);
+                instr.setRegister(params.get(1 - parameterWithSegmentPrefixIndex));
+                String displacementStr = params.get(parameterWithSegmentPrefixIndex);
+                displacementStr = displacementStr.split(":")[1];
+                instr.setSibDisplacementOnly(Integer.decode(displacementStr));
+                res.addAll(instr.encode());
+                return res;
             }
         }
-
-        List<Byte> res = new ArrayList<Byte>();
 
         HashMap<String, Integer> zeroParamsCommands = new HashMap<String, Integer>() {{
             put("nop", 0x90);
