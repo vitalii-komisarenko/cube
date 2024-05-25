@@ -148,6 +148,15 @@ public class Assembler {
             sib_payload.addAll(encode32BitsImmediate(displacement));
         }
 
+        void setSibData(int sibScale, int sibIndex, int sibBase, long displacement) {
+            rex_x = sibIndex > 7;
+            rex_b = sibBase > 7;
+
+            int sibByte = (sibScale >> 6) | (sibIndex >> 3) | sibBase;
+            sib_payload.add((byte) sibByte);
+            sib_payload.addAll(encode32BitsImmediate(displacement));
+        }
+
         void setImmediate(long _immediate, int numberOfBytes) {
             for (int i = 0; i < numberOfBytes; ++i) {
                 immediate.add((byte)((_immediate >> (8 * i)) & 0xFF));
