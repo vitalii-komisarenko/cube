@@ -89,6 +89,9 @@ public class Assembler {
             int registerIndex = getRegisterIndex(register);
             rex_b = registerIndex > 7;
             modrm_rm = registerIndex & 0x7;
+            if (registerIndex % 8 == 4) {
+                sib_payload.add((byte) 0x24);
+            }
         }
 
         public void setIndirectOperand(String str) {
@@ -115,19 +118,16 @@ public class Assembler {
                 return;
             }
 
-            if ((-128 <= displacement) || (displacement <= 127)) {
+            if ((-128 <= displacement) && (displacement <= 127)) {
                 setRegisterForIndirectAddressing(registerName);
                 modrm_mod = 1;
                 setImmediate8Bit(displacement);
                 return;
             }
 
-            if ((-0x8000 <= displacement) || (displacement <= 0x7fff)) {
-                setRegisterForIndirectAddressing(registerName);
-                modrm_mod = 2;
-                setImmediate32Bit(displacement);
-                return;
-            }
+            setRegisterForIndirectAddressing(registerName);
+            modrm_mod = 2;
+            setImmediate32Bit(displacement);
         }
 
         long parseInterger(String str) {
@@ -148,13 +148,15 @@ public class Assembler {
             sib_payload.addAll(encode32BitsImmediate(displacement));
         }
 
-        void setSibData(int sibScale, int sibIndex, int sibBase, long displacement) {
+        void setSibData(int sibScale, int sibIndex, int sibBase, Integer displacement) {
             rex_x = sibIndex > 7;
             rex_b = sibBase > 7;
 
             int sibByte = (sibScale >> 6) | (sibIndex >> 3) | sibBase;
             sib_payload.add((byte) sibByte);
-            sib_payload.addAll(encode32BitsImmediate(displacement));
+            if (displacement != null) {
+                sib_payload.addAll(encode32BitsImmediate(displacement));
+            }
         }
 
         void setImmediate(long _immediate, int numberOfBytes) {

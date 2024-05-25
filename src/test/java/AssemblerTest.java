@@ -261,7 +261,7 @@ public class AssemblerTest {
         checkAsm("pxor %xmm0 %xmm0", "66 0f ef c0");
         checkAsm("pcmpeqd %xmm0 %xmm0", "66 0f 76 c0");
         checkAsm("movaps %xmm0 (%r14)", "41 0f 29 06");
-        checkAsm("movdqa 0x410(%rsp) %xmm0", "66 0f 6f 84 24 10 04");
+        checkAsm("movdqa 0x410(%rsp) %xmm0", "66 0f 6f 84 24 10 04 00 00");
     }
 
     @Test
