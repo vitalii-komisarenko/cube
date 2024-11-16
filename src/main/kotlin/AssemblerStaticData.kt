@@ -218,6 +218,39 @@ public class AssemblerStaticData {
             )
         )
 
+        @JvmField public val setByteInstructions = hashMapOf(
+            "seto" to 0x0f90,
+            "setno" to 0x0f91,
+            "setb" to 0x0f92,
+            "setnae" to 0x0f92,
+            "setc" to 0x0f92,
+            "setnb" to 0x0f93,
+            "setae" to 0x0f93,
+            "setnc" to 0x0f93,
+            "setz" to 0x0f94,
+            "sete" to 0x0f94,
+            "setnz" to 0x0f95,
+            "setne" to 0x0f95,
+            "setbe" to 0x0f96,
+            "setna" to 0x0f96,
+            "setnb" to 0x0f97,
+            "setna" to 0x0f97,
+            "sets" to 0x0f98,
+            "setns" to 0x0f99,
+            "setp" to 0x0f9a,
+            "setpe" to 0x0f9a,
+            "setnp" to 0x0f9b,
+            "setpo" to 0x0f9b,
+            "setl" to 0x0f9c,
+            "setnge" to 0x0f9c,
+            "setnl" to 0x0f9d,
+            "setge" to 0x0f9d,
+            "setle" to 0x0f9e,
+            "setng" to 0x0f9e,
+            "setnle" to 0x0f9f,
+            "setg" to 0x0f9f,
+        )
+
         @JvmField public val modrmBasedToRegistersNot8Bits = mapOf(
             "mov" to 0x8b,
             "movdqa" to 0x660f6f,
